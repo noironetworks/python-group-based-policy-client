@@ -1,4 +1,4 @@
 [gerrit]
-host=review.openstack.org
+host=review.opendev.org
 port=29418
-project=openstack/python-group-based-policy-client.git
+project=x/python-group-based-policy-client.git

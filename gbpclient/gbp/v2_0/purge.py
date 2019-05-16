@@ -69,9 +69,16 @@ class Purge(n_purge.Purge):
                 if self.total_resources > 0:
                     percent_complete = (self.deleted_resources /
                                         float(self.total_resources)) * 100
-                sys.stdout.write("\rPurging resources: %d%% complete." %
-                                 percent_complete)
-                sys.stdout.flush()
+                try:
+                    sys.stdout.write("\rPurging resources: %d%% complete." %
+                                     percent_complete)
+                    sys.stdout.flush()
+                except Exception:
+                    # A broken pipe IOError exception might get thrown if
+                    # invoked from our MD's keystone tenant delete handler
+                    # code. We should just ignore that then continue to
+                    # purge the rest of the resources.
+                    continue
         return (deleted, failed, failures)
 
     def take_action(self, parsed_args):

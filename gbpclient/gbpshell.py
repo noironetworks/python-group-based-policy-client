@@ -656,10 +656,10 @@ class GBPShell(app.App):
             self.initialize_app(remainder)
         except Exception as err:
             if self.options.verbose_level >= self.DEBUG_LEVEL:
-                self.log.exception(unicode(err))
+                self.log.exception(encodeutils.exception_to_unicode(err))
                 raise
             else:
-                self.log.error(unicode(err))
+                self.log.error(encodeutils.exception_to_unicode(err))
             return 1
         result = 1
         if self.interactive_mode:
@@ -686,16 +686,17 @@ class GBPShell(app.App):
             return run_command(cmd, cmd_parser, sub_argv)
         except Exception as err:
             if self.options.verbose_level >= self.DEBUG_LEVEL:
-                self.log.exception(unicode(err))
+                self.log.exception(encodeutils.exception_to_unicode(err))
             else:
-                self.log.error(unicode(err))
+                self.log.error(encodeutils.exception_to_unicode(err))
             try:
                 self.clean_up(cmd, result, err)
             except Exception as err2:
                 if self.options.verbose_level >= self.DEBUG_LEVEL:
-                    self.log.exception(unicode(err2))
+                    self.log.exception(encodeutils.exception_to_unicode(err2))
                 else:
-                    self.log.error(_('Could not clean up: %s'), unicode(err2))
+                    self.log.error(_('Could not clean up: %s'),
+                                   encodeutils.exception_to_unicode(err2))
             if self.options.verbose_level >= self.DEBUG_LEVEL:
                 raise
         else:
@@ -703,9 +704,10 @@ class GBPShell(app.App):
                 self.clean_up(cmd, result, None)
             except Exception as err3:
                 if self.options.verbose_level >= self.DEBUG_LEVEL:
-                    self.log.exception(unicode(err3))
+                    self.log.exception(encodeutils.exception_to_unicode(err3))
                 else:
-                    self.log.error(_('Could not clean up: %s'), unicode(err3))
+                    self.log.error(_('Could not clean up: %s'),
+                                   encodeutils.exception_to_unicode(err3))
         return result
 
     def authenticate_user(self):
@@ -822,7 +824,8 @@ class GBPShell(app.App):
     def clean_up(self, cmd, result, err):
         self.log.debug('clean_up %s', cmd.__class__.__name__)
         if err:
-            self.log.debug('Got an error: %s', unicode(err))
+            self.log.debug('Got an error: %s',
+                           encodeutils.exception_to_unicode(err))
 
     def configure_logging(self):
         """Create logging handlers for any log output."""
@@ -938,7 +941,7 @@ def main(argv=sys.argv[1:]):
     except exc.NeutronClientException:
         return 1
     except Exception as e:
-        print(unicode(e))
+        print(encodeutils.exception_to_unicode(e))
         return 1
 
 

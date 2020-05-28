@@ -11,10 +11,11 @@
 #    under the License.
 #
 
-from mox3 import mox
+import mock
+import requests
+
 from neutronclient.common import exceptions
 from neutronclient.tests.unit import test_cli20 as neutron_test_cli20
-import requests
 
 from gbpclient import gbpshell
 from gbpclient.v2_0 import client as gbpclient
@@ -65,9 +66,6 @@ class CLITestV20Base(neutron_test_cli20.CLITestV20Base):
                               tenant_id=None, tags=None, admin_state_up=True,
                               extra_body=None, cmd_resource=None,
                               parent_id=None, **kwargs):
-        self.mox.StubOutWithMock(cmd, "get_client")
-        self.mox.StubOutWithMock(self.client.httpclient, "request")
-        cmd.get_client().MultipleTimes().AndReturn(self.client)
         if not cmd_resource:
             cmd_resource = resource
         body = {resource: {}, }
@@ -91,17 +89,26 @@ class CLITestV20Base(neutron_test_cli20.CLITestV20Base):
         path = getattr(self.client, resource_plural + "_path")
         if parent_id:
             path = path % parent_id
-        mox_body = MyComparator(body, self.client)
-        self.client.httpclient.request(
-            end_url(path), 'POST',
-            body=mox_body,
-            headers=mox.ContainsKeyValue(
-                'X-Auth-Token', TOKEN)).AndReturn((MyResp(200), resstr))
-        self.mox.ReplayAll()
+        mock_body = MyComparator(body, self.client)
         cmd_parser = cmd.get_parser('create_' + resource)
-        gbpshell.run_command(cmd, cmd_parser, args)
-        self.mox.VerifyAll()
-        self.mox.UnsetStubs()
+        resp = (MyResp(200), resstr)
+
+        with mock.patch.object(
+            cmd, "get_client", return_value=self.client
+        ) as mock_get_client, mock.patch.object(
+            self.client.httpclient, "request", return_value=resp
+        ) as mock_request:
+            gbpshell.run_command(cmd, cmd_parser, args)
+
+            self.assert_mock_multiple_calls_with_same_arguments(
+                mock_get_client, mock.call(), None)
+
+            mock_request.assert_called_once_with(
+                end_url(path), 'POST',
+                body=mock_body,
+                headers=neutron_test_cli20.ContainsKeyValue(
+                    {'X-Auth-Token': TOKEN}))
+
         _str = self.fake_stdout.make_string()
         self.assertIn(myid, _str)
         if name:
@@ -207,20 +214,19 @@ class CLITestV20ExceptionHandler(CLITestV20Base):
         self.assertEqual(e.status_code, 599)
 
     def test_connection_failed(self):
-        self.mox.StubOutWithMock(self.client.httpclient, 'request')
         self.client.httpclient.auth_token = 'token'
+        excp = requests.exceptions.ConnectionError('Connection refused')
 
-        self.client.httpclient.request(
-            end_url('/test'), 'GET',
-            headers=mox.ContainsKeyValue('X-Auth-Token', 'token')
-        ).AndRaise(requests.exceptions.ConnectionError('Connection refused'))
+        with mock.patch.object(self.client.httpclient, "request",
+                               side_effect=excp) as mock_request:
+            error = self.assertRaises(exceptions.ConnectionFailed,
+                                      self.client.get, '/test')
 
-        self.mox.ReplayAll()
-
-        error = self.assertRaises(exceptions.ConnectionFailed,
-                                  self.client.get, '/test')
+            mock_request.assert_called_once_with(
+                end_url('/test'), 'GET',
+                body=None,
+                headers=neutron_test_cli20.ContainsKeyValue(
+                    {'X-Auth-Token': 'token'}))
         # NB: ConnectionFailed has no explicit status_code, so this
         # tests that there is a fallback defined.
         self.assertIsNotNone(error.status_code)
-        self.mox.VerifyAll()
-        self.mox.UnsetStubs()

@@ -596,7 +596,7 @@ class CreateL3Policy(neutronV20.CreateCommand):
                     self.get_client(), 'external_segment',
                     list(external_segment.keys())[0])
                 ipaddrs = next(iter(external_segment.values()))
-                if ipaddrs is "":
+                if ipaddrs == "":
                     ipaddrs = []
                 else:
                     ipaddrs = next(iter(external_segment.values())).split(':')
@@ -679,7 +679,7 @@ class UpdateL3Policy(neutronV20.UpdateCommand):
                     self.get_client(), 'external_segment',
                     list(external_segment.keys())[0])
                 ipaddrs = next(iter(external_segment.values()))
-                if ipaddrs is "":
+                if ipaddrs == "":
                     ipaddrs = []
                 else:
                     ipaddrs = next(iter(external_segment.values())).split(':')

@@ -809,8 +809,6 @@ class GBPShell(app.App):
 
         super(GBPShell, self).initialize_app(argv)
 
-        self.api_version = {'network': self.api_version}
-
         # If the user is not asking for help, make sure they
         # have given us auth.
         cmd_name = None

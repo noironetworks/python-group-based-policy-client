@@ -936,8 +936,8 @@ class GBPShell(app.App):
 
 def main(argv=sys.argv[1:]):
     try:
-        return GBPShell(NEUTRON_API_VERSION).run(map(encodeutils.safe_decode,
-                                                     argv))
+        return GBPShell(NEUTRON_API_VERSION).run(
+            list(map(encodeutils.safe_decode, argv)))
     except exc.NeutronClientException:
         return 1
     except Exception as e:

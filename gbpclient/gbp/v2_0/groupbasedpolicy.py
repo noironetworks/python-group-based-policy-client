@@ -260,7 +260,8 @@ class CreatePolicyTargetGroup(neutronV20.CreateCommand):
                     parsed_args.network_service_policy)
 
         if parsed_args.provided_policy_rule_sets:
-            for key in parsed_args.provided_policy_rule_sets.keys():
+            for key in list(
+                    parsed_args.provided_policy_rule_sets.keys()):
                 id_key = neutronV20.find_resourceid_by_name_or_id(
                     self.get_client(), 'policy_rule_set',
                     key)
@@ -268,7 +269,8 @@ class CreatePolicyTargetGroup(neutronV20.CreateCommand):
                     parsed_args.provided_policy_rule_sets.pop(key)
 
         if parsed_args.consumed_policy_rule_sets:
-            for key in parsed_args.consumed_policy_rule_sets.keys():
+            for key in list(
+                    parsed_args.consumed_policy_rule_sets.keys()):
                 id_key = neutronV20.find_resourceid_by_name_or_id(
                     self.get_client(), 'policy_rule_set',
                     key)
@@ -358,7 +360,8 @@ class UpdatePolicyTargetGroup(neutronV20.UpdateCommand):
                     parsed_args.network_service_policy)
 
         if parsed_args.provided_policy_rule_sets:
-            for key in parsed_args.provided_policy_rule_sets.keys():
+            for key in list(
+                    parsed_args.provided_policy_rule_sets.keys()):
                 id_key = neutronV20.find_resourceid_by_name_or_id(
                     self.get_client(), 'policy_rule_set',
                     key)
@@ -366,7 +369,8 @@ class UpdatePolicyTargetGroup(neutronV20.UpdateCommand):
                     parsed_args.provided_policy_rule_sets.pop(key)
 
         if parsed_args.consumed_policy_rule_sets:
-            for key in parsed_args.consumed_policy_rule_sets.keys():
+            for key in list(
+                    parsed_args.consumed_policy_rule_sets.keys()):
                 id_key = neutronV20.find_resourceid_by_name_or_id(
                     self.get_client(), 'policy_rule_set',
                     key)
@@ -1381,7 +1385,8 @@ class CreateExternalPolicy(neutronV20.CreateCommand):
         body = {self.resource: {}, }
 
         if parsed_args.provided_policy_rule_sets:
-            for key in parsed_args.provided_policy_rule_sets.keys():
+            for key in list(
+                    parsed_args.provided_policy_rule_sets.keys()):
                 id_key = neutronV20.find_resourceid_by_name_or_id(
                     self.get_client(), 'policy_rule_set',
                     key)
@@ -1389,7 +1394,8 @@ class CreateExternalPolicy(neutronV20.CreateCommand):
                     parsed_args.provided_policy_rule_sets.pop(key))
 
         if parsed_args.consumed_policy_rule_sets:
-            for key in parsed_args.consumed_policy_rule_sets.keys():
+            for key in list(
+                    parsed_args.consumed_policy_rule_sets.keys()):
                 id_key = neutronV20.find_resourceid_by_name_or_id(
                     self.get_client(), 'policy_rule_set',
                     key)
@@ -1451,7 +1457,8 @@ class UpdateExternalPolicy(neutronV20.UpdateCommand):
         body = {self.resource: {}, }
 
         if parsed_args.provided_policy_rule_sets:
-            for key in parsed_args.provided_policy_rule_sets.keys():
+            for key in list(
+                    parsed_args.provided_policy_rule_sets.keys()):
                 id_key = neutronV20.find_resourceid_by_name_or_id(
                     self.get_client(), 'policy_rule_set',
                     key)
@@ -1459,7 +1466,8 @@ class UpdateExternalPolicy(neutronV20.UpdateCommand):
                     parsed_args.provided_policy_rule_sets.pop(key))
 
         if parsed_args.consumed_policy_rule_sets:
-            for key in parsed_args.consumed_policy_rule_sets.keys():
+            for key in list(
+                    parsed_args.consumed_policy_rule_sets.keys()):
                 id_key = neutronV20.find_resourceid_by_name_or_id(
                     self.get_client(), 'policy_rule_set',
                     key)

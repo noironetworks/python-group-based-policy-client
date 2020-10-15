@@ -11,7 +11,8 @@
 #    under the License.
 #
 
-import mock
+from unittest import mock
+
 import requests
 
 from neutronclient.common import exceptions

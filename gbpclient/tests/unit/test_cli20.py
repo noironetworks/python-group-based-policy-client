@@ -12,6 +12,8 @@
 #
 
 import mock
+
+import fixtures
 import requests
 
 from neutronclient.common import exceptions
@@ -20,11 +22,17 @@ from neutronclient.tests.unit import test_cli20 as neutron_test_cli20
 from gbpclient import gbpshell
 from gbpclient.v2_0 import client as gbpclient
 
+from six.moves import StringIO
+
 API_VERSION = neutron_test_cli20.API_VERSION
 TOKEN = neutron_test_cli20.TOKEN
 ENDURL = neutron_test_cli20.ENDURL
 capture_std_streams = neutron_test_cli20.capture_std_streams
 end_url = neutron_test_cli20.end_url
+
+
+class ParserException(Exception):
+    pass
 
 
 class FakeStdout(neutron_test_cli20.FakeStdout):
@@ -113,6 +121,23 @@ class CLITestV20Base(neutron_test_cli20.CLITestV20Base):
         self.assertIn(myid, _str)
         if name:
             self.assertIn(name, _str)
+
+    def check_parser_ext(self, cmd, args, verify_args, ext):
+        cmd_parser = self.cmd.get_parser('check_parser')
+        cmd_parser = ext.get_parser(cmd_parser)
+        stderr = StringIO()
+        with fixtures.MonkeyPatch('sys.stderr', stderr):
+            try:
+                parsed_args = cmd_parser.parse_args(args)
+            except SystemExit:
+                raise ParserException("Argument parse failed: %s" %
+                                      stderr.getvalue())
+        for av in verify_args:
+            attr, value = av
+            if attr:
+                self.assertIn(attr, parsed_args)
+                self.assertEqual(value, getattr(parsed_args, attr))
+        return parsed_args
 
 
 class ClientV2TestJson(CLITestV20Base):

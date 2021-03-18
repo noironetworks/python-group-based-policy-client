@@ -35,8 +35,6 @@ class TestRouterCreate(test_router.TestRouter, test_cli20.CLITestV20Base):
         ]
         verifylist = [
             ('name', self.new_router.name),
-            ('apic_distinguished_names', None),
-            ('apic_synchronization_state', None),
             ('apic_external_provided_contracts', None),
             ('apic_external_consumed_contracts', None),
         ]
@@ -53,16 +51,13 @@ class TestRouterCreate(test_router.TestRouter, test_cli20.CLITestV20Base):
     def test_create_all_options(self):
         arglist = [
             self.new_router.name,
-            "--apic-distinguished-names", '{"disttest1": "test1"}',
-            "--apic-external-provided-contracts", "['ptest1']",
-            "--apic-external-consumed-contracts", "['ctest1']",
+            "--apic-external-provided-contracts", 'ptest1',
+            "--apic-external-consumed-contracts", 'ctest1',
         ]
         verifylist = [
             ('name', self.new_router.name),
-            ('apic_distinguished_names', '{"disttest1": "test1"}'),
-            ('apic_synchronization_state', None),
-            ('apic_external_provided_contracts', "['ptest1']"),
-            ('apic_external_consumed_contracts', "['ctest1']"),
+            ('apic_external_provided_contracts', 'ptest1'),
+            ('apic_external_consumed_contracts', 'ctest1'),
         ]
         create_ext = router_ext.CreateAndSetRouterExtension(self.app)
         parsed_args = self.check_parser_ext(
@@ -72,7 +67,6 @@ class TestRouterCreate(test_router.TestRouter, test_cli20.CLITestV20Base):
         self.network.create_router.assert_called_once_with(**{
             'admin_state_up': True,
             'name': self.new_router.name,
-            'apic:distinguished_names': {"disttest1": "test1"},
             'apic:external_provided_contracts': ['ptest1'],
             'apic:external_consumed_contracts': ['ctest1'],
         })
@@ -115,13 +109,13 @@ class TestRouterSet(test_router.TestRouter, test_cli20.CLITestV20Base):
     def test_set_all_valid_options(self):
         arglist = [
             self._router.name,
-            "--apic-external-provided-contracts", "['ptest1', 'ptest11']",
-            "--apic-external-consumed-contracts", "['ctest1', 'ctest11']",
+            "--apic-external-provided-contracts", 'ptest1,ptest11',
+            "--apic-external-consumed-contracts", 'ctest1,ctest11',
         ]
         verifylist = [
             ('router', self._router.name),
-            ('apic_external_provided_contracts', "['ptest1', 'ptest11']"),
-            ('apic_external_consumed_contracts', "['ctest1', 'ctest11']"),
+            ('apic_external_provided_contracts', 'ptest1,ptest11'),
+            ('apic_external_consumed_contracts', 'ctest1,ctest11'),
         ]
         set_ext = router_ext.CreateAndSetRouterExtension(self.app)
         parsed_args = self.check_parser_ext(

@@ -42,9 +42,6 @@ def _convert_erspan_config(parsed_args):
 
 def _get_attrs_port_extension(client_manager, parsed_args):
     attrs = _get_attrs_port_new(client_manager, parsed_args)
-    if parsed_args.apic_synchronization_state:
-        attrs['apic:synchronization_state'
-              ] = parsed_args.apic_synchronization_state
     if parsed_args.apic_erspan_config:
         attrs['apic:erspan_config'
               ] = _convert_erspan_config(parsed_args)
@@ -64,25 +61,27 @@ class CreateAndSetPortExtension(hooks.CommandHook):
 
     def get_parser(self, parser):
         parser.add_argument(
-            '--apic-synchronization-state',
-            metavar="<apic_synchronization_state>",
-            dest='apic_synchronization_state',
-            help=_("Apic synchronization state")
-        )
-        parser.add_argument(
             '--apic-erspan-config',
             metavar="<apic_erspan_config>",
             dest='apic_erspan_config',
             action=parseractions.MultiKeyValueAction,
             required_keys=['flow-id', 'dest-ip'],
             optional_keys=['direction'],
-            help=_("Apic ERSPAN configuration")
+            help=_("APIC ERSPAN configuration\n"
+                   "Custom data to be passed as apic:erspan_config\n"
+                   "Data is passed as <key>=<value>, where "
+                   "valid keys are 'flow-id', 'dest-ip', and 'direction'\n"
+                   "Required keys: flow-id, dest-ip\n"
+                   "Optional keys: direction\n"
+                   "Syntax Example: dest-ip=10.0.0.0,flow-id=1 "
+                   "or dest-ip=10.0.0.0,flow-id=1,direction=in ")
         )
         parser.add_argument(
             '--no-apic-erspan-config',
             dest='no_apic_erspan_config',
             action='store_true',
-            help=_("Apic ERSPAN configuration")
+            help=_("No APIC ERSPAN configuration\n"
+                   "Clear the apic:erspan_config configuration ")
         )
         return parser
 

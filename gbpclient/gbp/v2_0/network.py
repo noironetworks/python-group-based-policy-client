@@ -15,14 +15,11 @@
 Network extension implementations
 """
 
-import ast
-
-from oslo_serialization import jsonutils
-
 from cliff import hooks
 from openstack.network.v2 import network as network_sdk
 from openstack import resource
 from openstackclient.network.v2 import network
+from osc_lib.cli import parseractions
 
 from openstackclient.i18n import _
 
@@ -32,12 +29,11 @@ _get_attrs_network_new = network._get_attrs_network
 
 def _get_attrs_network_extension(client_manager, parsed_args):
     attrs = _get_attrs_network_new(client_manager, parsed_args)
-    if parsed_args.apic_synchronization_state:
-        attrs['apic:synchronization_state'
-              ] = parsed_args.apic_synchronization_state
-    if parsed_args.apic_svi_enable:
+    if 'apic_svi_enable' in parsed_args and \
+       parsed_args.apic_svi_enable:
         attrs['apic:svi'] = True
-    if parsed_args.apic_svi_disable:
+    if 'apic_svi_disable' in parsed_args and \
+       parsed_args.apic_svi_disable:
         attrs['apic:svi'] = False
     if parsed_args.apic_bgp_enable:
         attrs['apic:bgp_enable'] = True
@@ -64,26 +60,31 @@ def _get_attrs_network_extension(client_manager, parsed_args):
               ] = parsed_args.apic_nested_domain_node_network_vlan
     if parsed_args.apic_nested_domain_allowed_vlans:
         attrs['apic:nested_domain_allowed_vlans'
-              ] = ast.literal_eval(
-                  parsed_args.apic_nested_domain_allowed_vlans)
+              ] = list(map(int,
+                           parsed_args.apic_nested_domain_allowed_vlans.split(
+                               ",")))
     if parsed_args.apic_extra_provided_contracts:
         attrs['apic:extra_provided_contracts'
-              ] = ast.literal_eval(parsed_args.apic_extra_provided_contracts)
+              ] = parsed_args.apic_extra_provided_contracts.split(",")
     if parsed_args.apic_extra_consumed_contracts:
         attrs['apic:extra_consumed_contracts'
-              ] = ast.literal_eval(parsed_args.apic_extra_consumed_contracts)
+              ] = parsed_args.apic_extra_consumed_contracts.split(",")
     if parsed_args.apic_epg_contract_masters:
         attrs['apic:epg_contract_masters'
-              ] = ast.literal_eval(parsed_args.apic_epg_contract_masters)
-    if parsed_args.apic_distinguished_names:
-        attrs['apic:distinguished_names'
-              ] = jsonutils.loads(parsed_args.apic_distinguished_names)
+              ] = parsed_args.apic_epg_contract_masters.split(",")
+    if 'apic_distinguished_names' in parsed_args and \
+       parsed_args.apic_distinguished_names:
+        result = {}
+        for element in parsed_args.apic_distinguished_names:
+            result.update(element)
+        attrs['apic:distinguished_names'] = result
     if parsed_args.external:
-        if parsed_args.apic_nat_type:
+        if 'apic_nat_type' in parsed_args and \
+           parsed_args.apic_nat_type:
             attrs['apic:nat_type'] = parsed_args.apic_nat_type
         if parsed_args.apic_external_cidrs:
             attrs['apic:external_cidrs'
-                  ] = ast.literal_eval(parsed_args.apic_external_cidrs)
+                  ] = parsed_args.apic_external_cidrs.split(",")
     return attrs
 
 
@@ -119,124 +120,291 @@ network_sdk.Network.apic_nat_type = resource.Body('apic:nat_type')
 network_sdk.Network.apic_external_cidrs = resource.Body('apic:external_cidrs')
 
 
-class CreateAndSetNetworkExtension(hooks.CommandHook):
+class CreateNetworkExtension(hooks.CommandHook):
 
     def get_parser(self, parser):
-        parser.add_argument(
-            '--apic-synchronization-state',
-            metavar="<apic_synchronization_state>",
-            dest='apic_synchronization_state',
-            help=_("Apic synchronization state")
-        )
         parser.add_argument(
             '--apic-svi-enable',
             action='store_true',
             default=None,
             dest='apic_svi_enable',
-            help=_("Set Apic SVI to true")
+            help=_("Set APIC SVI to true\n"
+                   "Default value for apic_svi is False ")
         )
         parser.add_argument(
             '--apic-svi-disable',
             action='store_true',
             dest='apic_svi_disable',
-            help=_("Set Apic SVI to false")
+            help=_("Set APIC SVI to false\n"
+                   "Default value for apic_svi is False ")
         )
         parser.add_argument(
             '--apic-bgp-enable',
             action='store_true',
             default=None,
             dest='apic_bgp_enable',
-            help=_("Set Apic BGP to true")
+            help=_("Set APIC BGP to true\n"
+                   "Default value for apic_bgp is False ")
         )
         parser.add_argument(
             '--apic-bgp-disable',
             action='store_true',
             dest='apic_bgp_disable',
-            help=_("Set Apic BGP to false")
+            help=_("Set APIC BGP to false\n"
+                   "Default value for apic_bgp is False ")
         )
         parser.add_argument(
             '--apic-bgp-type',
-            metavar="<apic_bgp_type>",
+            metavar="<string>",
             dest='apic_bgp_type',
-            help=_("Apic BGP Type")
+            help=_("APIC BGP Type\n"
+                   "Default value is 'default_export'\n"
+                   "Valid values: default_export, '' ")
         )
         parser.add_argument(
             '--apic-bgp-asn',
-            metavar="<apic_bgp_asn>",
+            metavar="<integer>",
             dest='apic_bgp_asn',
-            help=_("Apic BGP ASN")
+            help=_("APIC BGP ASN\n"
+                   "Default value is 0\n"
+                   "Valid values: non negative integer ")
         )
         parser.add_argument(
             '--apic-nested-domain-name',
-            metavar="<apic_nested_domain_name>",
+            metavar="<string>",
             dest='apic_nested_domain_name',
-            help=_("Apic nested domain name")
+            help=_("APIC nested domain name\n"
+                   "Default value is '' ")
         )
         parser.add_argument(
             '--apic-nested-domain-type',
-            metavar="<apic_nested_domain_type>",
+            metavar="<string>",
             dest='apic_nested_domain_type',
-            help=_("Apic nested domain type")
+            help=_("APIC nested domain type\n"
+                   "Default value is '' ")
         )
         parser.add_argument(
             '--apic-nested-domain-infra-vlan',
-            metavar="<apic_nested_domain_infra_vlan>",
+            metavar="<integer>",
             dest='apic_nested_domain_infra_vlan',
-            help=_("Apic nested domain infra vlan")
+            help=_("APIC nested domain infra vlan\n"
+                   "Valid values: integer between 1 and 4093 ")
         )
         parser.add_argument(
             '--apic-nested-domain-service-vlan',
-            metavar="<apic_nested_domain_service_vlan>",
+            metavar="<integer>",
             dest='apic_nested_domain_service_vlan',
-            help=_("Apic nested domain service vlan")
+            help=_("APIC nested domain service vlan\n"
+                   "Valid values: integer between 1 and 4093 ")
         )
         parser.add_argument(
             '--apic-nested-domain-node-network-vlan',
-            metavar="<apic_nested_domain_node_network_vlan>",
+            metavar="<integer>",
             dest='apic_nested_domain_node_network_vlan',
-            help=_("Apic nested domain node network vlan")
+            help=_("APIC nested domain node network vlan\n"
+                   "Valid values: integer between 1 and 4093 ")
         )
         parser.add_argument(
             '--apic-nested-domain-allowed-vlans',
-            metavar="<apic_nested_domain_allowed_vlans>",
+            metavar="<int,int>",
             dest='apic_nested_domain_allowed_vlans',
-            help=_("Apic nested domain allowed vlans")
+            help=_("APIC nested domain allowed vlans\n"
+                   "Data is passed as comma separated integers\n"
+                   "Valid values: integers between 1 and 4093\n"
+                   "Syntax Example: 1 or 1,2 ")
         )
         parser.add_argument(
             '--apic-extra-provided-contracts',
-            metavar="<apic_extra_provided_contracts>",
+            metavar="<aaa,bbb>",
             dest='apic_extra_provided_contracts',
-            help=_("Apic extra provided contracts")
+            help=_("APIC extra provided contracts\n"
+                   "Data is passed as comma separated strings\n"
+                   "Default value is []\n"
+                   "Valid values: list of unique strings\n"
+                   "Syntax Example: foo or foo,bar ")
         )
         parser.add_argument(
             '--apic-extra-consumed-contracts',
-            metavar="<apic_extra_consumed_contracts>",
+            metavar="<aaa,bbb>",
             dest='apic_extra_consumed_contracts',
-            help=_("Apic extra consumed contracts")
+            help=_("APIC extra consumed contracts\n"
+                   "Data is passed as comma separated strings\n"
+                   "Default value is []\n"
+                   "Valid values: list of unique strings\n"
+                   "Syntax Example: foo or foo,bar ")
         )
         parser.add_argument(
             '--apic-epg-contract-masters',
-            metavar="<apic_epg_contract_masters>",
+            metavar="<aaa,bbb>",
             dest='apic_epg_contract_masters',
-            help=_("Apic epg contract masters")
+            help=_("APIC epg contract masters\n"
+                   "Data is passed as comma separated strings\n"
+                   "Default value is []\n"
+                   "Syntax Example: foo or foo,bar ")
         )
         parser.add_argument(
             '--apic-distinguished-names',
-            metavar="<apic_distinguished_names>",
+            metavar="<ExternalNetwork=aaa,BridgeDomain=bbb>",
             dest='apic_distinguished_names',
-            help=_("Apic distinguished names")
+            action=parseractions.MultiKeyValueAction,
+            optional_keys=['ExternalNetwork', 'BridgeDomain'],
+            help=_("APIC distinguished names\n"
+                   "Custom data to be passed as apic:distinguished_names\n"
+                   "Data is passed as <key>=<value>, where "
+                   "valid keys are 'ExternalNetwork' and 'BridgeDomain'\n"
+                   "Both the keys are optional\n"
+                   "Syntax Example: BridgeDomain=aaa or ExternalNetwork=bbb "
+                   "or ExternalNetwork=aaa,BridgeDomain=bbb ")
         )
         parser.add_argument(
             '--apic-nat-type',
-            metavar="<apic_nat_type>",
+            metavar="<string>",
             dest='apic_nat_type',
-            help=_("Apic nat type for external network")
+            help=_("APIC nat type for external network\n"
+                   "For external type networks only\n"
+                   "Default value is 'distributed'\n"
+                   "Valid values: distributed, edge, '' ")
         )
         parser.add_argument(
             '--apic-external-cidrs',
-            metavar="<apic_external_cidrs>",
+            metavar="<subnet1,subnet2>",
             dest='apic_external_cidrs',
-            help=_("Apic external CIDRS for external network")
+            help=_("APIC external CIDRS for external network\n"
+                   "For external type networks only\n"
+                   "Data is passed as comma separated valid ip subnets\n"
+                   "Default value is ['0.0.0.0/0']\n"
+                   "Syntax Example: 10.10.10.0/24 "
+                   "or 10.10.10.0/24,20.20.20.0/24 ")
+        )
+        return parser
+
+    def get_epilog(self):
+        return ''
+
+    def before(self, parsed_args):
+        return parsed_args
+
+    def after(self, parsed_args, return_code):
+        return return_code
+
+
+class SetNetworkExtension(hooks.CommandHook):
+
+    def get_parser(self, parser):
+        parser.add_argument(
+            '--apic-bgp-enable',
+            action='store_true',
+            default=None,
+            dest='apic_bgp_enable',
+            help=_("Set APIC BGP to true\n"
+                   "Default value for apic_bgp is False ")
+        )
+        parser.add_argument(
+            '--apic-bgp-disable',
+            action='store_true',
+            dest='apic_bgp_disable',
+            help=_("Set APIC BGP to false\n"
+                   "Default value for apic_bgp is False ")
+        )
+        parser.add_argument(
+            '--apic-bgp-type',
+            metavar="<string>",
+            dest='apic_bgp_type',
+            help=_("APIC BGP Type\n"
+                   "Default value is 'default_export'\n"
+                   "Valid values: default_export, '' ")
+        )
+        parser.add_argument(
+            '--apic-bgp-asn',
+            metavar="<integer>",
+            dest='apic_bgp_asn',
+            help=_("APIC BGP ASN\n"
+                   "Default value is 0\n"
+                   "Valid values: non negative integer ")
+        )
+        parser.add_argument(
+            '--apic-nested-domain-name',
+            metavar="<string>",
+            dest='apic_nested_domain_name',
+            help=_("APIC nested domain name\n"
+                   "Default value is '' ")
+        )
+        parser.add_argument(
+            '--apic-nested-domain-type',
+            metavar="<string>",
+            dest='apic_nested_domain_type',
+            help=_("APIC nested domain type\n"
+                   "Default value is '' ")
+        )
+        parser.add_argument(
+            '--apic-nested-domain-infra-vlan',
+            metavar="<integer>",
+            dest='apic_nested_domain_infra_vlan',
+            help=_("APIC nested domain infra vlan\n"
+                   "Valid values: integer between 1 and 4093 ")
+        )
+        parser.add_argument(
+            '--apic-nested-domain-service-vlan',
+            metavar="<integer>",
+            dest='apic_nested_domain_service_vlan',
+            help=_("APIC nested domain service vlan\n"
+                   "Valid values: integer between 1 and 4093 ")
+        )
+        parser.add_argument(
+            '--apic-nested-domain-node-network-vlan',
+            metavar="<integer>",
+            dest='apic_nested_domain_node_network_vlan',
+            help=_("APIC nested domain node network vlan\n"
+                   "Valid values: integer between 1 and 4093 ")
+        )
+        parser.add_argument(
+            '--apic-nested-domain-allowed-vlans',
+            metavar="<int,int>",
+            dest='apic_nested_domain_allowed_vlans',
+            help=_("APIC nested domain allowed vlans. "
+                   "Data is passed as comma separated integers\n"
+                   "Valid values: integers between 1 and 4093\n"
+                   "Syntax Example: 1 or 1,2 ")
+        )
+        parser.add_argument(
+            '--apic-extra-provided-contracts',
+            metavar="<aaa,bbb>",
+            dest='apic_extra_provided_contracts',
+            help=_("APIC extra provided contracts\n"
+                   "Data is passed as comma separated of strings.\n"
+                   "Default value is []\n"
+                   "Valid values: list of unique strings\n"
+                   "Syntax Example: foo or foo,bar ")
+        )
+        parser.add_argument(
+            '--apic-extra-consumed-contracts',
+            metavar="<aaa,bbb>",
+            dest='apic_extra_consumed_contracts',
+            help=_("APIC extra consumed contracts\n"
+                   "Data is passed as comma separated strings\n"
+                   "Default value is []\n"
+                   "Valid values: list of unique strings\n"
+                   "Syntax Example: foo or foo,bar ")
+        )
+        parser.add_argument(
+            '--apic-epg-contract-masters',
+            metavar="<aaa,bbb,ccc>",
+            dest='apic_epg_contract_masters',
+            help=_("APIC epg contract masters\n"
+                   "Data is passed as comma separated strings\n"
+                   "Default value is []\n"
+                   "Syntax Example: foo or foo,bar ")
+        )
+        parser.add_argument(
+            '--apic-external-cidrs',
+            metavar="<subnet1,subnet2>",
+            dest='apic_external_cidrs',
+            help=_("APIC external CIDRS for external network\n"
+                   "For external type networks only\n"
+                   "Data is passed as comma separated valid ip subnets\n"
+                   "Default value is ['0.0.0.0/0']\n"
+                   "Syntax Example: 10.10.10.0/24 "
+                   "or 10.10.10.0/24,20.20.20.0/24 ")
         )
         return parser
 

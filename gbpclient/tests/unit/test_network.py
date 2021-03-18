@@ -40,7 +40,6 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
             ('apic_nested_domain_name', None),
             ('apic_nested_domain_type', None),
             ('apic_distinguished_names', None),
-            ('apic_synchronization_state', None),
             ('apic_nat_type', None),
             ('apic_external_cidrs', None),
             ('apic_svi_enable', None),
@@ -54,7 +53,7 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
             ('apic_extra_provided_contracts', None),
             ('apic_extra_consumed_contracts', None),
         ]
-        create_ext = network_ext.CreateAndSetNetworkExtension(self.app)
+        create_ext = network_ext.CreateNetworkExtension(self.app)
         parsed_args = self.check_parser_ext(
             self.cmd, arglist, verifylist, create_ext)
         columns, data = self.cmd.take_action(parsed_args)
@@ -70,41 +69,40 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
             "--external",
             "--apic-nested-domain-name", "dntest1",
             "--apic-nested-domain-type", "dntype1",
-            "--apic-distinguished-names", '{"disttest1": "test1"}',
+            "--apic-distinguished-names", 'ExternalNetwork=test1',
             "--apic-nat-type", "edge",
-            "--apic-external-cidrs", "['20.20.20.0/8']",
+            "--apic-external-cidrs", '20.20.20.0/8',
             "--apic-svi-enable",
             "--apic-bgp-enable",
             "--apic-bgp-asn", '1',
             "--apic-bgp-type", "bgptest1",
             "--apic-nested-domain-infra-vlan", '1',
-            "--apic-nested-domain-allowed-vlans", "[2]",
+            "--apic-nested-domain-allowed-vlans", '2',
             "--apic-nested-domain-service-vlan", '3',
             "--apic-nested-domain-node-network-vlan", '4',
-            "--apic-extra-provided-contracts", "['pcontest1']",
-            "--apic-extra-consumed-contracts", "['contest1']",
+            "--apic-extra-provided-contracts", 'pcontest1',
+            "--apic-extra-consumed-contracts", 'contest1',
         ]
         verifylist = [
             ('name', self._network.name),
             ('external', True),
             ('apic_nested_domain_name', "dntest1"),
             ('apic_nested_domain_type', "dntype1"),
-            ('apic_distinguished_names', '{"disttest1": "test1"}'),
-            ('apic_synchronization_state', None),
+            ('apic_distinguished_names', [{'ExternalNetwork': 'test1'}]),
             ('apic_nat_type', "edge"),
-            ('apic_external_cidrs', "['20.20.20.0/8']"),
+            ('apic_external_cidrs', '20.20.20.0/8'),
             ('apic_svi_enable', True),
             ('apic_bgp_enable', True),
             ('apic_bgp_asn', '1'),
             ('apic_bgp_type', "bgptest1"),
             ('apic_nested_domain_infra_vlan', '1'),
-            ('apic_nested_domain_allowed_vlans', "[2]"),
+            ('apic_nested_domain_allowed_vlans', '2'),
             ('apic_nested_domain_service_vlan', '3'),
             ('apic_nested_domain_node_network_vlan', '4'),
-            ('apic_extra_provided_contracts', "['pcontest1']"),
-            ('apic_extra_consumed_contracts', "['contest1']"),
+            ('apic_extra_provided_contracts', 'pcontest1'),
+            ('apic_extra_consumed_contracts', 'contest1'),
         ]
-        create_ext = network_ext.CreateAndSetNetworkExtension(self.app)
+        create_ext = network_ext.CreateNetworkExtension(self.app)
         parsed_args = self.check_parser_ext(
             self.cmd, arglist, verifylist, create_ext)
         columns, data = self.cmd.take_action(parsed_args)
@@ -114,7 +112,7 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
             'name': self._network.name,
             'router:external': True,
             'apic:nested_domain_name': 'dntest1',
-            'apic:distinguished_names': {"disttest1": "test1"},
+            'apic:distinguished_names': {"ExternalNetwork": "test1"},
             'apic:external_cidrs': ['20.20.20.0/8'],
             'apic:nat_type': 'edge',
             'apic:nested_domain_name': 'dntest1',
@@ -152,11 +150,7 @@ class TestNetworkSet(test_network.TestNetwork, test_cli20.CLITestV20Base):
             ('network', self._network.name),
             ('apic_nested_domain_name', None),
             ('apic_nested_domain_type', None),
-            ('apic_distinguished_names', None),
-            ('apic_synchronization_state', None),
-            ('apic_nat_type', None),
             ('apic_external_cidrs', None),
-            ('apic_svi_enable', None),
             ('apic_bgp_enable', None),
             ('apic_bgp_asn', None),
             ('apic_bgp_type', None),
@@ -167,7 +161,7 @@ class TestNetworkSet(test_network.TestNetwork, test_cli20.CLITestV20Base):
             ('apic_extra_provided_contracts', None),
             ('apic_extra_consumed_contracts', None),
         ]
-        set_ext = network_ext.CreateAndSetNetworkExtension(self.app)
+        set_ext = network_ext.SetNetworkExtension(self.app)
         parsed_args = self.check_parser_ext(
             self.cmd, arglist, verifylist, set_ext)
         result = self.cmd.take_action(parsed_args)
@@ -181,39 +175,34 @@ class TestNetworkSet(test_network.TestNetwork, test_cli20.CLITestV20Base):
             "--external",
             "--apic-nested-domain-name", "dntest11",
             "--apic-nested-domain-type", "dntype11",
-            "--apic-nat-type", "distributed",
-            "--apic-external-cidrs", "['30.30.30.0/8']",
+            "--apic-external-cidrs", '30.30.30.0/8',
             "--apic-bgp-disable",
             "--apic-bgp-asn", '2',
             "--apic-bgp-type", "bgptest11",
             "--apic-nested-domain-infra-vlan", '2',
-            "--apic-nested-domain-allowed-vlans", "[2, 3]",
+            "--apic-nested-domain-allowed-vlans", '2,3',
             "--apic-nested-domain-service-vlan", '4',
             "--apic-nested-domain-node-network-vlan", '5',
-            "--apic-extra-provided-contracts", "['pcontest1', 'pcontest11']",
-            "--apic-extra-consumed-contracts", "['contest1', 'contest11']",
+            "--apic-extra-provided-contracts", 'pcontest1,pcontest11',
+            "--apic-extra-consumed-contracts", 'contest1,contest11',
         ]
         verifylist = [
             ('network', self._network.name),
             ('external', True),
             ('apic_nested_domain_name', "dntest11"),
             ('apic_nested_domain_type', "dntype11"),
-            ('apic_distinguished_names', None),
-            ('apic_synchronization_state', None),
-            ('apic_nat_type', "distributed"),
-            ('apic_external_cidrs', "['30.30.30.0/8']"),
-            ('apic_svi_enable', None),
+            ('apic_external_cidrs', '30.30.30.0/8'),
             ('apic_bgp_disable', True),
             ('apic_bgp_asn', '2'),
             ('apic_bgp_type', "bgptest11"),
             ('apic_nested_domain_infra_vlan', '2'),
-            ('apic_nested_domain_allowed_vlans', "[2, 3]"),
+            ('apic_nested_domain_allowed_vlans', '2,3'),
             ('apic_nested_domain_service_vlan', '4'),
             ('apic_nested_domain_node_network_vlan', '5'),
-            ('apic_extra_provided_contracts', "['pcontest1', 'pcontest11']"),
-            ('apic_extra_consumed_contracts', "['contest1', 'contest11']"),
+            ('apic_extra_provided_contracts', 'pcontest1,pcontest11'),
+            ('apic_extra_consumed_contracts', 'contest1,contest11'),
         ]
-        set_ext = network_ext.CreateAndSetNetworkExtension(self.app)
+        set_ext = network_ext.SetNetworkExtension(self.app)
         parsed_args = self.check_parser_ext(
             self.cmd, arglist, verifylist, set_ext)
         result = self.cmd.take_action(parsed_args)
@@ -222,7 +211,6 @@ class TestNetworkSet(test_network.TestNetwork, test_cli20.CLITestV20Base):
             'router:external': True,
             'apic:nested_domain_name': 'dntest11',
             'apic:external_cidrs': ['30.30.30.0/8'],
-            'apic:nat_type': 'distributed',
             'apic:nested_domain_name': 'dntest11',
             'apic:nested_domain_type': 'dntype11',
             'apic:bgp_enable': False,

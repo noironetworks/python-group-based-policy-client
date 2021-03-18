@@ -15,8 +15,6 @@
 Subnet extension implementations
 """
 
-from oslo_serialization import jsonutils
-
 from cliff import hooks
 from openstack.network.v2 import subnet as subnet_sdk
 from openstack import resource
@@ -30,19 +28,15 @@ _get_attrs_subnet_new = subnet._get_attrs
 
 def _get_attrs_subnet_extension(client_manager, parsed_args, is_create=True):
     attrs = _get_attrs_subnet_new(client_manager, parsed_args, is_create)
-    if parsed_args.apic_distinguished_names:
-        attrs['apic:distinguished_names'
-              ] = jsonutils.loads(parsed_args.apic_distinguished_names)
-    if parsed_args.apic_synchronization_state:
-        attrs['apic:synchronization_state'
-              ] = parsed_args.apic_synchronization_state
     if parsed_args.apic_snat_host_pool_enable:
         attrs['apic:snat_host_pool'] = True
     if parsed_args.apic_snat_host_pool_disable:
         attrs['apic:snat_host_pool'] = False
-    if parsed_args.apic_active_active_aap_enable:
+    if 'apic_active_active_aap_enable' in parsed_args and \
+       parsed_args.apic_active_active_aap_enable:
         attrs['apic:active_active_aap'] = True
-    if parsed_args.apic_active_active_aap_disable:
+    if 'apic_active_active_aap_disable' in parsed_args and \
+       parsed_args.apic_active_active_aap_disable:
         attrs['apic:active_active_aap'] = False
     return attrs
 
@@ -59,46 +53,68 @@ subnet_sdk.Subnet.apic_active_active_aap = resource.Body(
     'apic:active_active_aap')
 
 
-class CreateAndSetSubnetExtension(hooks.CommandHook):
+class CreateSubnetExtension(hooks.CommandHook):
 
     def get_parser(self, parser):
-        parser.add_argument(
-            '--apic-distinguished-names',
-            metavar="<apic_distinguished_names>",
-            dest='apic_distinguished_names',
-            help=_("Apic distinguished names")
-        )
-        parser.add_argument(
-            '--apic-synchronization-state',
-            metavar="<apic_synchronization_state>",
-            dest='apic_synchronization_state',
-            help=_("Apic synchronization state")
-        )
         parser.add_argument(
             '--apic-snat-host-pool-enable',
             action='store_true',
             default=None,
             dest='apic_snat_host_pool_enable',
-            help=_("Set Apic snat host pool to true")
+            help=_("Set APIC snat host pool to true\n"
+                   "Default value for apic_snat_host_pool is False ")
         )
         parser.add_argument(
             '--apic-snat-host-pool-disable',
             action='store_true',
             dest='apic_snat_host_pool_disable',
-            help=_("Set Apic snat host pool to false")
+            help=_("Set APIC snat host pool to false\n"
+                   "Default value for apic_snat_host_pool is False ")
         )
         parser.add_argument(
             '--apic-active-active-aap-enable',
             action='store_true',
             default=None,
             dest='apic_active_active_aap_enable',
-            help=_("Set Apic active active aap to true")
+            help=_("Set APIC active active aap to true\n"
+                   "Default value for apic_active_active_aap is False ")
         )
         parser.add_argument(
             '--apic-active-active-aap-disable',
             action='store_true',
             dest='apic_active_active_aap_disable',
-            help=_("Set Apic active active aap to false")
+            help=_("Set APIC active active aap to false\n"
+                   "Default value for apic_active_active_aap is False ")
+        )
+        return parser
+
+    def get_epilog(self):
+        return ''
+
+    def before(self, parsed_args):
+        return parsed_args
+
+    def after(self, parsed_args, return_code):
+        return return_code
+
+
+class SetSubnetExtension(hooks.CommandHook):
+
+    def get_parser(self, parser):
+        parser.add_argument(
+            '--apic-snat-host-pool-enable',
+            action='store_true',
+            default=None,
+            dest='apic_snat_host_pool_enable',
+            help=_("Set APIC snat host pool to true\n"
+                   "Default value for apic_snat_host_pool is False ")
+        )
+        parser.add_argument(
+            '--apic-snat-host-pool-disable',
+            action='store_true',
+            dest='apic_snat_host_pool_disable',
+            help=_("Set APIC snat host pool to false\n"
+                   "Default value for apic_snat_host_pool is False ")
         )
         return parser
 

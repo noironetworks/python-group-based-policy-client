@@ -15,10 +15,6 @@
 Router extension implementations
 """
 
-import ast
-
-from oslo_serialization import jsonutils
-
 from cliff import hooks
 from openstack.network.v2 import router as router_sdk
 from openstack import resource
@@ -32,20 +28,12 @@ _get_attrs_router_new = router._get_attrs
 
 def _get_attrs_router_extension(client_manager, parsed_args):
     attrs = _get_attrs_router_new(client_manager, parsed_args)
-    if parsed_args.apic_distinguished_names:
-        attrs['apic:distinguished_names'
-              ] = jsonutils.loads(parsed_args.apic_distinguished_names)
-    if parsed_args.apic_synchronization_state:
-        attrs['apic:synchronization_state'
-              ] = parsed_args.apic_synchronization_state
     if parsed_args.apic_external_provided_contracts:
         attrs['apic:external_provided_contracts'
-              ] = ast.literal_eval(
-            parsed_args.apic_external_provided_contracts)
+              ] = parsed_args.apic_external_provided_contracts.split(",")
     if parsed_args.apic_external_consumed_contracts:
         attrs['apic:external_consumed_contracts'
-              ] = ast.literal_eval(
-            parsed_args.apic_external_consumed_contracts)
+              ] = parsed_args.apic_external_consumed_contracts.split(",")
     return attrs
 
 
@@ -65,28 +53,24 @@ class CreateAndSetRouterExtension(hooks.CommandHook):
 
     def get_parser(self, parser):
         parser.add_argument(
-            '--apic-distinguished-names',
-            metavar="<apic_distinguished_names>",
-            dest='apic_distinguished_names',
-            help=_("Apic distinguished names")
-        )
-        parser.add_argument(
-            '--apic-synchronization-state',
-            metavar="<apic_synchronization_state>",
-            dest='apic_synchronization_state',
-            help=_("Apic synchronization state")
-        )
-        parser.add_argument(
             '--apic-external-provided-contracts',
-            metavar="<apic_external_provided_contracts>",
+            metavar="<aaa,bbb>",
             dest='apic_external_provided_contracts',
-            help=_("Apic external provided contracts")
+            help=_("APIC external provided contracts\n"
+                   "Data is passed as comma separated strings\n"
+                   "Default value is []\n"
+                   "Valid values: list of unique strings\n"
+                   "Syntax Example: foo or foo,bar ")
         )
         parser.add_argument(
             '--apic-external-consumed-contracts',
-            metavar="<apic_external_consumed_contracts>",
+            metavar="<aaa,bbb>",
             dest='apic_external_consumed_contracts',
-            help=_("Apic external consumed contracts")
+            help=_("APIC external consumed contracts\n"
+                   "Data is passed as comma separated strings\n"
+                   "Default value is []\n"
+                   "Valid values: list of unique strings\n"
+                   "Syntax Example: foo or foo,bar ")
         )
         return parser
 

@@ -49,12 +49,10 @@ class TestSubnetCreate(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
         verifylist = [
             ('name', self._subnet.name),
             ('network', self._subnet.network_id),
-            ('apic_distinguished_names', None),
-            ('apic_synchronization_state', None),
             ('apic_snat_host_pool_enable', None),
             ('apic_active_active_aap_enable', None),
         ]
-        create_ext = subnet_ext.CreateAndSetSubnetExtension(self.app)
+        create_ext = subnet_ext.CreateSubnetExtension(self.app)
         parsed_args = self.check_parser_ext(
             self.cmd, arglist, verifylist, create_ext)
         columns, data = self.cmd.take_action(parsed_args)
@@ -71,19 +69,16 @@ class TestSubnetCreate(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
             "--subnet-range", self._subnet.cidr,
             "--network", self._subnet.network_id,
             self._subnet.name,
-            "--apic-distinguished-names", '{"disttest1": "test1"}',
             "--apic-snat-host-pool-enable",
             "--apic-active-active-aap-enable",
         ]
         verifylist = [
             ('name', self._subnet.name),
             ('network', self._subnet.network_id),
-            ('apic_distinguished_names', '{"disttest1": "test1"}'),
-            ('apic_synchronization_state', None),
             ('apic_snat_host_pool_enable', True),
             ('apic_active_active_aap_enable', True),
         ]
-        create_ext = subnet_ext.CreateAndSetSubnetExtension(self.app)
+        create_ext = subnet_ext.CreateSubnetExtension(self.app)
         parsed_args = self.check_parser_ext(
             self.cmd, arglist, verifylist, create_ext)
         columns, data = self.cmd.take_action(parsed_args)
@@ -94,7 +89,6 @@ class TestSubnetCreate(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
             'name': self._subnet.name,
             'network_id': self._subnet.network_id,
             'apic:active_active_aap': True,
-            'apic:distinguished_names': {"disttest1": "test1"},
             'apic:snat_host_pool': True,
         })
 
@@ -117,12 +111,9 @@ class TestSubnetSet(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
         ]
         verifylist = [
             ('subnet', self._subnet.name),
-            ('apic_distinguished_names', None),
-            ('apic_synchronization_state', None),
             ('apic_snat_host_pool_enable', None),
-            ('apic_active_active_aap_enable', None),
         ]
-        set_ext = subnet_ext.CreateAndSetSubnetExtension(self.app)
+        set_ext = subnet_ext.SetSubnetExtension(self.app)
         parsed_args = self.check_parser_ext(
             self.cmd, arglist, verifylist, set_ext)
         result = self.cmd.take_action(parsed_args)
@@ -137,12 +128,9 @@ class TestSubnetSet(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
         ]
         verifylist = [
             ('subnet', self._subnet.name),
-            ('apic_distinguished_names', None),
-            ('apic_synchronization_state', None),
             ('apic_snat_host_pool_disable', True),
-            ('apic_active_active_aap_enable', None),
         ]
-        set_ext = subnet_ext.CreateAndSetSubnetExtension(self.app)
+        set_ext = subnet_ext.SetSubnetExtension(self.app)
         parsed_args = self.check_parser_ext(
             self.cmd, arglist, verifylist, set_ext)
         result = self.cmd.take_action(parsed_args)

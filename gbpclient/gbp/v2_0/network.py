@@ -78,6 +78,9 @@ def _get_attrs_network_extension(client_manager, parsed_args):
         for element in parsed_args.apic_distinguished_names:
             result.update(element)
         attrs['apic:distinguished_names'] = result
+    if parsed_args.apic_policy_enforcement_pref:
+        attrs['apic:policy_enforcement_pref'
+              ] = parsed_args.apic_policy_enforcement_pref
     if parsed_args.external:
         if 'apic_nat_type' in parsed_args and \
            parsed_args.apic_nat_type:
@@ -116,6 +119,8 @@ network_sdk.Network.apic_epg_contract_masters = resource.Body(
     'apic:epg_contract_masters')
 network_sdk.Network.apic_distinguished_names = resource.Body(
     'apic:distinguished_names')
+network_sdk.Network.apic_policy_enforcement_pref = resource.Body(
+    'apic:policy_enforcement_pref')
 network_sdk.Network.apic_nat_type = resource.Body('apic:nat_type')
 network_sdk.Network.apic_external_cidrs = resource.Body('apic:external_cidrs')
 
@@ -257,6 +262,14 @@ class CreateNetworkExtension(hooks.CommandHook):
                    "or ExternalNetwork=aaa,BridgeDomain=bbb ")
         )
         parser.add_argument(
+            '--apic-policy-enforcement-pref',
+            metavar="<string>",
+            dest='apic_policy_enforcement_pref',
+            help=_("APIC Policy Enforcement Pref\n"
+                   "Default value is 'unenforced'\n"
+                   "Valid values: unenforced, enforced, '' ")
+        )
+        parser.add_argument(
             '--apic-nat-type',
             metavar="<string>",
             dest='apic_nat_type',
@@ -394,6 +407,14 @@ class SetNetworkExtension(hooks.CommandHook):
                    "Data is passed as comma separated strings\n"
                    "Default value is []\n"
                    "Syntax Example: foo or foo,bar ")
+        )
+        parser.add_argument(
+            '--apic-policy-enforcement-pref',
+            metavar="<string>",
+            dest='apic_policy_enforcement_pref',
+            help=_("APIC Policy Enforcement Pref\n"
+                   "Default value is 'unenforced'\n"
+                   "Valid values: unenforced, enforced, '' ")
         )
         parser.add_argument(
             '--apic-external-cidrs',

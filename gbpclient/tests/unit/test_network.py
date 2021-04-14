@@ -52,6 +52,7 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
             ('apic_nested_domain_node_network_vlan', None),
             ('apic_extra_provided_contracts', None),
             ('apic_extra_consumed_contracts', None),
+            ('apic_policy_enforcement_pref', None),
         ]
         create_ext = network_ext.CreateNetworkExtension(self.app)
         parsed_args = self.check_parser_ext(
@@ -82,6 +83,7 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
             "--apic-nested-domain-node-network-vlan", '4',
             "--apic-extra-provided-contracts", 'pcontest1',
             "--apic-extra-consumed-contracts", 'contest1',
+            "--apic-policy-enforcement-pref", 'enforced',
         ]
         verifylist = [
             ('name', self._network.name),
@@ -101,6 +103,7 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
             ('apic_nested_domain_node_network_vlan', '4'),
             ('apic_extra_provided_contracts', 'pcontest1'),
             ('apic_extra_consumed_contracts', 'contest1'),
+            ('apic_policy_enforcement_pref', 'enforced'),
         ]
         create_ext = network_ext.CreateNetworkExtension(self.app)
         parsed_args = self.check_parser_ext(
@@ -127,6 +130,7 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
             'apic:nested_domain_infra_vlan': '1',
             'apic:nested_domain_node_network_vlan': '4',
             'apic:nested_domain_service_vlan': '3',
+            'apic:policy_enforcement_pref': 'enforced',
         })
 
 
@@ -160,6 +164,7 @@ class TestNetworkSet(test_network.TestNetwork, test_cli20.CLITestV20Base):
             ('apic_nested_domain_node_network_vlan', None),
             ('apic_extra_provided_contracts', None),
             ('apic_extra_consumed_contracts', None),
+            ('apic_policy_enforcement_pref', None),
         ]
         set_ext = network_ext.SetNetworkExtension(self.app)
         parsed_args = self.check_parser_ext(
@@ -185,6 +190,7 @@ class TestNetworkSet(test_network.TestNetwork, test_cli20.CLITestV20Base):
             "--apic-nested-domain-node-network-vlan", '5',
             "--apic-extra-provided-contracts", 'pcontest1,pcontest11',
             "--apic-extra-consumed-contracts", 'contest1,contest11',
+            "--apic-policy-enforcement-pref", 'enforced',
         ]
         verifylist = [
             ('network', self._network.name),
@@ -201,6 +207,7 @@ class TestNetworkSet(test_network.TestNetwork, test_cli20.CLITestV20Base):
             ('apic_nested_domain_node_network_vlan', '5'),
             ('apic_extra_provided_contracts', 'pcontest1,pcontest11'),
             ('apic_extra_consumed_contracts', 'contest1,contest11'),
+            ('apic_policy_enforcement_pref', 'enforced'),
         ]
         set_ext = network_ext.SetNetworkExtension(self.app)
         parsed_args = self.check_parser_ext(
@@ -222,6 +229,7 @@ class TestNetworkSet(test_network.TestNetwork, test_cli20.CLITestV20Base):
             'apic:nested_domain_infra_vlan': '2',
             'apic:nested_domain_node_network_vlan': '5',
             'apic:nested_domain_service_vlan': '4',
+            'apic:policy_enforcement_pref': 'enforced',
         }
 
         self.network.update_network.assert_called_once_with(

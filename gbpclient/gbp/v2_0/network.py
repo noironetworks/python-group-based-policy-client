@@ -88,6 +88,9 @@ def _get_attrs_network_extension(client_manager, parsed_args):
         if parsed_args.apic_external_cidrs:
             attrs['apic:external_cidrs'
                   ] = parsed_args.apic_external_cidrs.split(",")
+        if 'apic_no_external_cidrs' in parsed_args and \
+           parsed_args.apic_no_external_cidrs:
+            attrs['apic:external_cidrs'] = []
     return attrs
 
 
@@ -423,9 +426,19 @@ class SetNetworkExtension(hooks.CommandHook):
             help=_("APIC external CIDRS for external network\n"
                    "For external type networks only\n"
                    "Data is passed as comma separated valid ip subnets\n"
+                   "Need to pass the --external argument wth this field\n"
                    "Default value is ['0.0.0.0/0']\n"
                    "Syntax Example: 10.10.10.0/24 "
                    "or 10.10.10.0/24,20.20.20.0/24 ")
+        )
+        parser.add_argument(
+            '--apic-no-external-cidrs',
+            dest='apic_no_external_cidrs',
+            action='store_true',
+            help=_("Reset APIC external CIDRS for external network\n"
+                   "For external type networks only\n"
+                   "Need to pass the --external argument wth this field\n"
+                   "Resets the apic:external_cidrs field to 0.0.0.0/0 ")
         )
         return parser
 

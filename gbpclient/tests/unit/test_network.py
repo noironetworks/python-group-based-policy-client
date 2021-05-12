@@ -34,6 +34,7 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
     def test_create_default_options(self):
         arglist = [
             self._network.name,
+            "--external",
         ]
         verifylist = [
             ('name', self._network.name),
@@ -62,6 +63,7 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
         self.network.create_network.assert_called_once_with(**{
             'admin_state_up': True,
             'name': self._network.name,
+            'router:external': True,
         })
 
     def test_create_all_options(self):
@@ -230,6 +232,44 @@ class TestNetworkSet(test_network.TestNetwork, test_cli20.CLITestV20Base):
             'apic:nested_domain_node_network_vlan': '5',
             'apic:nested_domain_service_vlan': '4',
             'apic:policy_enforcement_pref': 'enforced',
+        }
+
+        self.network.update_network.assert_called_once_with(
+            self._network, **attrs)
+        self.assertIsNone(result)
+
+    def test_set_apic_no_external_cidrs(self):
+        arglist = [
+            self._network.name,
+            "--external",
+            "--apic-no-external-cidrs",
+        ]
+        verifylist = [
+            ('network', self._network.name),
+            ('external', True),
+            ('apic_nested_domain_name', None),
+            ('apic_nested_domain_type', None),
+            ('apic_external_cidrs', None),
+            ('apic_no_external_cidrs', True),
+            ('apic_bgp_enable', None),
+            ('apic_bgp_asn', None),
+            ('apic_bgp_type', None),
+            ('apic_nested_domain_infra_vlan', None),
+            ('apic_nested_domain_allowed_vlans', None),
+            ('apic_nested_domain_service_vlan', None),
+            ('apic_nested_domain_node_network_vlan', None),
+            ('apic_extra_provided_contracts', None),
+            ('apic_extra_consumed_contracts', None),
+            ('apic_policy_enforcement_pref', None),
+        ]
+        set_ext = network_ext.SetNetworkExtension(self.app)
+        parsed_args = self.check_parser_ext(
+            self.cmd, arglist, verifylist, set_ext)
+        result = self.cmd.take_action(parsed_args)
+
+        attrs = {
+            'router:external': True,
+            'apic:external_cidrs': [],
         }
 
         self.network.update_network.assert_called_once_with(

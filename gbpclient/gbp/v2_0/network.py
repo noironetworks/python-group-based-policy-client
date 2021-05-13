@@ -82,8 +82,8 @@ def _get_attrs_network_extension(client_manager, parsed_args):
         attrs['apic:policy_enforcement_pref'
               ] = parsed_args.apic_policy_enforcement_pref
     if parsed_args.external:
-        if 'apic_nat_type' in parsed_args and \
-           parsed_args.apic_nat_type:
+        if ('apic_nat_type' in parsed_args and
+            parsed_args.apic_nat_type is not None):
             attrs['apic:nat_type'] = parsed_args.apic_nat_type
         if parsed_args.apic_external_cidrs:
             attrs['apic:external_cidrs'

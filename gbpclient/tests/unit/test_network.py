@@ -135,6 +135,29 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
             'apic:policy_enforcement_pref': 'enforced',
         })
 
+    def test_create_empty_contracts(self):
+        arglist = [
+            self._network.name,
+            "--apic-extra-provided-contracts", '',
+            "--apic-extra-consumed-contracts", '',
+        ]
+        verifylist = [
+            ('name', self._network.name),
+            ('apic_extra_provided_contracts', ''),
+            ('apic_extra_consumed_contracts', ''),
+        ]
+        create_ext = network_ext.CreateNetworkExtension(self.app)
+        parsed_args = self.check_parser_ext(
+            self.cmd, arglist, verifylist, create_ext)
+        columns, data = self.cmd.take_action(parsed_args)
+
+        self.network.create_network.assert_called_once_with(**{
+            'admin_state_up': True,
+            'name': self._network.name,
+            'apic:extra_consumed_contracts': [],
+            'apic:extra_provided_contracts': [],
+        })
+
     def test_create_no_nat_option(self):
         arglist = [
             self._network.name,

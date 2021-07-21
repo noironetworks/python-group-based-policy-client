@@ -63,12 +63,19 @@ def _get_attrs_network_extension(client_manager, parsed_args):
               ] = list(map(int,
                            parsed_args.apic_nested_domain_allowed_vlans.split(
                                ",")))
-    if parsed_args.apic_extra_provided_contracts:
-        attrs['apic:extra_provided_contracts'
-              ] = parsed_args.apic_extra_provided_contracts.split(",")
-    if parsed_args.apic_extra_consumed_contracts:
-        attrs['apic:extra_consumed_contracts'
-              ] = parsed_args.apic_extra_consumed_contracts.split(",")
+    if parsed_args.apic_extra_provided_contracts is not None:
+        if parsed_args.apic_extra_provided_contracts:
+            attrs['apic:extra_provided_contracts'
+                  ] = parsed_args.apic_extra_provided_contracts.split(",")
+        else:
+            attrs['apic:extra_provided_contracts'] = []
+
+    if parsed_args.apic_extra_consumed_contracts is not None:
+        if parsed_args.apic_extra_consumed_contracts:
+            attrs['apic:extra_consumed_contracts'
+                  ] = parsed_args.apic_extra_consumed_contracts.split(",")
+        else:
+            attrs['apic:extra_consumed_contracts'] = []
     if parsed_args.apic_epg_contract_masters:
         attrs['apic:epg_contract_masters'
               ] = parsed_args.apic_epg_contract_masters.split(",")

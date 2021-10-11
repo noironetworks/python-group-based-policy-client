@@ -51,6 +51,7 @@ class TestSubnetCreate(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
             ('network', self._subnet.network_id),
             ('apic_snat_host_pool_enable', None),
             ('apic_active_active_aap_enable', None),
+            ('apic_snat_subnet_only_enable', None),
         ]
         create_ext = subnet_ext.CreateSubnetExtension(self.app)
         parsed_args = self.check_parser_ext(
@@ -71,12 +72,14 @@ class TestSubnetCreate(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
             self._subnet.name,
             "--apic-snat-host-pool-enable",
             "--apic-active-active-aap-enable",
+            "--apic-snat-subnet-only-enable",
         ]
         verifylist = [
             ('name', self._subnet.name),
             ('network', self._subnet.network_id),
             ('apic_snat_host_pool_enable', True),
             ('apic_active_active_aap_enable', True),
+            ('apic_snat_subnet_only_enable', True),
         ]
         create_ext = subnet_ext.CreateSubnetExtension(self.app)
         parsed_args = self.check_parser_ext(
@@ -90,6 +93,7 @@ class TestSubnetCreate(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
             'network_id': self._subnet.network_id,
             'apic:active_active_aap': True,
             'apic:snat_host_pool': True,
+            'apic:snat_subnet_only': True,
         })
 
 
@@ -112,6 +116,7 @@ class TestSubnetSet(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
         verifylist = [
             ('subnet', self._subnet.name),
             ('apic_snat_host_pool_enable', None),
+            ('apic_snat_subnet_only_enable', None),
         ]
         set_ext = subnet_ext.SetSubnetExtension(self.app)
         parsed_args = self.check_parser_ext(
@@ -125,10 +130,12 @@ class TestSubnetSet(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
         arglist = [
             self._subnet.name,
             "--apic-snat-host-pool-disable",
+            "--apic-snat-subnet-only-disable",
         ]
         verifylist = [
             ('subnet', self._subnet.name),
             ('apic_snat_host_pool_disable', True),
+            ('apic_snat_subnet_only_disable', True),
         ]
         set_ext = subnet_ext.SetSubnetExtension(self.app)
         parsed_args = self.check_parser_ext(
@@ -137,6 +144,7 @@ class TestSubnetSet(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
 
         attrs = {
             'apic:snat_host_pool': False,
+            'apic:snat_subnet_only': False,
         }
         self.network.update_subnet.assert_called_with(self._subnet, **attrs)
         self.assertIsNone(result)

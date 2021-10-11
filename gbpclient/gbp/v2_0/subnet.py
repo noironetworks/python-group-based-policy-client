@@ -38,6 +38,11 @@ def _get_attrs_subnet_extension(client_manager, parsed_args, is_create=True):
     if 'apic_active_active_aap_disable' in parsed_args and \
        parsed_args.apic_active_active_aap_disable:
         attrs['apic:active_active_aap'] = False
+    if parsed_args.apic_snat_subnet_only_enable:
+        attrs['apic:snat_subnet_only'] = True
+    if parsed_args.apic_snat_subnet_only_disable:
+        attrs['apic:snat_subnet_only'] = False
+
     return attrs
 
 
@@ -51,6 +56,8 @@ subnet_sdk.Subnet.apic_snat_host_pool = resource.Body(
     'apic:snat_host_pool')
 subnet_sdk.Subnet.apic_active_active_aap = resource.Body(
     'apic:active_active_aap')
+subnet_sdk.Subnet.apic_snat_subnet_only = resource.Body(
+    'apic:snat_subnet_only')
 
 
 class CreateSubnetExtension(hooks.CommandHook):
@@ -86,6 +93,21 @@ class CreateSubnetExtension(hooks.CommandHook):
             help=_("Set APIC active active aap to false\n"
                    "Default value for apic_active_active_aap is False ")
         )
+        parser.add_argument(
+            '--apic-snat-subnet-only-enable',
+            action='store_true',
+            default=None,
+            dest='apic_snat_subnet_only_enable',
+            help=_("Set APIC snat subnet only to true\n"
+                   "Default value for apic_snat_subnet_only is False ")
+        )
+        parser.add_argument(
+            '--apic-snat-subnet-only-disable',
+            action='store_true',
+            dest='apic_snat_subnet_only_disable',
+            help=_("Set APIC snat subnet only to false\n"
+                   "Default value for apic_snat_subnet_only is False ")
+        )
         return parser
 
     def get_epilog(self):
@@ -115,6 +137,21 @@ class SetSubnetExtension(hooks.CommandHook):
             dest='apic_snat_host_pool_disable',
             help=_("Set APIC snat host pool to false\n"
                    "Default value for apic_snat_host_pool is False ")
+        )
+        parser.add_argument(
+            '--apic-snat-subnet-only-enable',
+            action='store_true',
+            default=None,
+            dest='apic_snat_subnet_only_enable',
+            help=_("Set APIC snat subnet only to true\n"
+                   "Default value for apic_snat_subnet_only is False ")
+        )
+        parser.add_argument(
+            '--apic-snat-subnet-only-disable',
+            action='store_true',
+            dest='apic_snat_subnet_only_disable',
+            help=_("Set APIC snat subnet only to false\n"
+                   "Default value for apic_snat_subnet_only is False ")
         )
         return parser
 

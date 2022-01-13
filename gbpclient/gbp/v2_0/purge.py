@@ -105,7 +105,7 @@ class Purge(n_purge.Purge):
         deleted, failed, failures = self._purge_resources(neutron_client,
                                                           resource_types,
                                                           resources)
-        print('\n%s' % self._build_message(deleted, failed, failures))
+        print(('\n%s' % self._build_message(deleted, failed, failures)))
 
         # clean up Neutron resources also
         super(Purge, self).take_action(parsed_args)

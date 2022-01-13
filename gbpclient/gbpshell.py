@@ -15,7 +15,6 @@
 Command-line interface to the GBP APIs
 """
 
-from __future__ import print_function
 
 import argparse
 import logging
@@ -331,7 +330,7 @@ class GBPShell(app.App):
             version=VERSION,
             command_manager=commandmanager.CommandManager('gbp.cli'), )
         self.commands = COMMANDS
-        for k, v in self.commands[apiversion].items():
+        for k, v in list(self.commands[apiversion].items()):
             self.command_manager.add_command(k, v)
 
         # This is instantiated in initialize_app() only when using
@@ -610,14 +609,16 @@ class GBPShell(app.App):
         """Prints all of the commands and options for bash-completion."""
         commands = set()
         options = set()
-        for option, _action in self.parser._option_string_actions.items():
+        for option, _action in list(
+                self.parser._option_string_actions.items()):
             options.add(option)
         for command_name, command in self.command_manager:
             commands.add(command_name)
             cmd_factory = command.load()
             cmd = cmd_factory(self, None)
             cmd_parser = cmd.get_parser('')
-            for option, _action in cmd_parser._option_string_actions.items():
+            for option, _action in list(
+                    cmd_parser._option_string_actions.items()):
                 options.add(option)
         print(' '.join(commands | options))
 

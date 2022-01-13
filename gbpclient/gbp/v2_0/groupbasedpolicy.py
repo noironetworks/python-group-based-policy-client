@@ -595,11 +595,12 @@ class CreateL3Policy(neutronV20.CreateCommand):
                 external_segment_id = neutronV20.find_resourceid_by_name_or_id(
                     self.get_client(), 'external_segment',
                     list(external_segment.keys())[0])
-                ipaddrs = next(iter(external_segment.values()))
+                ipaddrs = next(iter(list(external_segment.values())))
                 if ipaddrs == "":
                     ipaddrs = []
                 else:
-                    ipaddrs = next(iter(external_segment.values())).split(':')
+                    ipaddrs = next(
+                        iter(list(external_segment.values()))).split(':')
                 external_segments_dict[external_segment_id] = ipaddrs
 
             body[self.resource]['external_segments'] = external_segments_dict
@@ -678,11 +679,12 @@ class UpdateL3Policy(neutronV20.UpdateCommand):
                 external_segment_id = neutronV20.find_resourceid_by_name_or_id(
                     self.get_client(), 'external_segment',
                     list(external_segment.keys())[0])
-                ipaddrs = next(iter(external_segment.values()))
+                ipaddrs = next(iter(list(external_segment.values())))
                 if ipaddrs == "":
                     ipaddrs = []
                 else:
-                    ipaddrs = next(iter(external_segment.values())).split(':')
+                    ipaddrs = next(
+                        iter(list(external_segment.values()))).split(':')
                 external_segments_dict[external_segment_id] = ipaddrs
 
             body[self.resource]['external_segments'] = external_segments_dict

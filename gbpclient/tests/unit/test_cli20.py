@@ -177,7 +177,8 @@ class CLITestV20ExceptionHandler(CLITestV20Base):
         pass
 
     def test_exception_handler_v20_unknown_error_to_per_code_exception(self):
-        for status_code, client_exc in exceptions.HTTP_EXCEPTION_MAP.items():
+        for status_code, client_exc in list(
+                exceptions.HTTP_EXCEPTION_MAP.items()):
             error_msg = 'Unknown error'
             error_detail = 'This is detail'
             self._test_exception_handler_v20(

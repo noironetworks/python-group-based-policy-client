@@ -88,6 +88,11 @@ def _get_attrs_network_extension(client_manager, parsed_args):
     if parsed_args.apic_policy_enforcement_pref:
         attrs['apic:policy_enforcement_pref'
               ] = parsed_args.apic_policy_enforcement_pref
+    if parsed_args.apic_no_nat_cidrs:
+        attrs['apic:no_nat_cidrs'] = parsed_args.apic_no_nat_cidrs.split(",")
+    if ('no_apic_no_nat_cidrs' in parsed_args and
+        parsed_args.no_apic_no_nat_cidrs):
+        attrs['apic:no_nat_cidrs'] = []
     if parsed_args.external:
         if ('apic_nat_type' in parsed_args and
             parsed_args.apic_nat_type is not None):
@@ -133,6 +138,7 @@ network_sdk.Network.apic_policy_enforcement_pref = resource.Body(
     'apic:policy_enforcement_pref')
 network_sdk.Network.apic_nat_type = resource.Body('apic:nat_type')
 network_sdk.Network.apic_external_cidrs = resource.Body('apic:external_cidrs')
+network_sdk.Network.apic_no_nat_cidrs = resource.Body('apic:no_nat_cidrs')
 
 
 class CreateNetworkExtension(hooks.CommandHook):
@@ -299,6 +305,16 @@ class CreateNetworkExtension(hooks.CommandHook):
                    "Syntax Example: 10.10.10.0/24 "
                    "or 10.10.10.0/24,20.20.20.0/24 ")
         )
+        parser.add_argument(
+            '--apic-no-nat-cidrs',
+            metavar="<subnet1,subnet2>",
+            dest='apic_no_nat_cidrs',
+            help=_("APIC CIDRS for a network to config no NAT routing\n"
+                   "Data is passed as comma separated valid ip subnets\n"
+                   "Default value is []\n"
+                   "Syntax Example: 10.10.10.0/24 "
+                   "or 10.10.10.0/24,20.20.20.0/24 ")
+        )
         return parser
 
     def get_epilog(self):
@@ -446,6 +462,23 @@ class SetNetworkExtension(hooks.CommandHook):
                    "For external type networks only\n"
                    "Need to pass the --external argument wth this field\n"
                    "Resets the apic:external_cidrs field to 0.0.0.0/0 ")
+        )
+        parser.add_argument(
+            '--apic-no-nat-cidrs',
+            metavar="<subnet1,subnet2>",
+            dest='apic_no_nat_cidrs',
+            help=_("APIC CIDRS for a network to config no NAT routing\n"
+                   "Data is passed as comma separated valid ip subnets\n"
+                   "Default value is []\n"
+                   "Syntax Example: 10.10.10.0/24 "
+                   "or 10.10.10.0/24,20.20.20.0/24 ")
+        )
+        parser.add_argument(
+            '--no-apic-no-nat-cidrs',
+            dest='no_apic_no_nat_cidrs',
+            action='store_true',
+            help=_("Reset APIC no NAT CIDRS for a network\n"
+                   "Resets the apic:no_nat_cidrs field to []")
         )
         return parser
 

@@ -39,7 +39,6 @@ from neutronclient.version import __version__
 
 from gbpclient.gbp.v2_0 import groupbasedpolicy as gbp
 from gbpclient.gbp.v2_0 import purge
-from gbpclient.gbp.v2_0 import servicechain
 
 VERSION = '2.0'
 NEUTRON_API_VERSION = '2.0'
@@ -158,36 +157,6 @@ COMMAND_V2 = {
     'policy-rule-set-list': gbp.ListPolicyRuleSet,
     'policy-rule-set-show': gbp.ShowPolicyRuleSet,
     'purge': purge.Purge,
-    'service-profile-list': servicechain.ListServiceProfile,
-    'service-profile-show': servicechain.ShowServiceProfile,
-    'service-profile-create': servicechain.CreateServiceProfile,
-    'service-profile-delete': servicechain.DeleteServiceProfile,
-    'service-profile-update': servicechain.UpdateServiceProfile,
-    'servicechain-node-list': servicechain.ListServiceChainNode,
-    'servicechain-node-show': servicechain.ShowServiceChainNode,
-    'servicechain-node-create': servicechain.CreateServiceChainNode,
-    'servicechain-node-delete': servicechain.DeleteServiceChainNode,
-    'servicechain-node-update': servicechain.UpdateServiceChainNode,
-    'servicechain-spec-list': servicechain.ListServiceChainSpec,
-    'servicechain-spec-show': servicechain.ShowServiceChainSpec,
-    'servicechain-spec-create': servicechain.CreateServiceChainSpec,
-    'servicechain-spec-delete': servicechain.DeleteServiceChainSpec,
-    'servicechain-spec-update': servicechain.UpdateServiceChainSpec,
-    'servicechain-instance-list': (
-        servicechain.ListServiceChainInstance
-    ),
-    'servicechain-instance-show': (
-        servicechain.ShowServiceChainInstance
-    ),
-    'servicechain-instance-create': (
-        servicechain.CreateServiceChainInstance
-    ),
-    'servicechain-instance-delete': (
-        servicechain.DeleteServiceChainInstance
-    ),
-    'servicechain-instance-update': (
-        servicechain.UpdateServiceChainInstance
-    ),
     'pt-create': gbp.CreatePolicyTarget,
     'pt-delete': gbp.DeletePolicyTarget,
     'pt-update': gbp.UpdatePolicyTarget,
@@ -253,36 +222,6 @@ COMMAND_V2 = {
     'prs-update': gbp.UpdatePolicyRuleSet,
     'prs-list': gbp.ListPolicyRuleSet,
     'prs-show': gbp.ShowPolicyRuleSet,
-    'sp-list': servicechain.ListServiceProfile,
-    'sp-show': servicechain.ShowServiceProfile,
-    'sp-create': servicechain.CreateServiceProfile,
-    'sp-delete': servicechain.DeleteServiceProfile,
-    'sp-update': servicechain.UpdateServiceProfile,
-    'scn-list': servicechain.ListServiceChainNode,
-    'scn-show': servicechain.ShowServiceChainNode,
-    'scn-create': servicechain.CreateServiceChainNode,
-    'scn-delete': servicechain.DeleteServiceChainNode,
-    'scn-update': servicechain.UpdateServiceChainNode,
-    'scs-list': servicechain.ListServiceChainSpec,
-    'scs-show': servicechain.ShowServiceChainSpec,
-    'scs-create': servicechain.CreateServiceChainSpec,
-    'scs-delete': servicechain.DeleteServiceChainSpec,
-    'scs-update': servicechain.UpdateServiceChainSpec,
-    'sci-list': (
-        servicechain.ListServiceChainInstance
-    ),
-    'sci-show': (
-        servicechain.ShowServiceChainInstance
-    ),
-    'sci-create': (
-        servicechain.CreateServiceChainInstance
-    ),
-    'sci-delete': (
-        servicechain.DeleteServiceChainInstance
-    ),
-    'sci-update': (
-        servicechain.UpdateServiceChainInstance
-    ),
 }
 
 COMMANDS = {'2.0': COMMAND_V2}

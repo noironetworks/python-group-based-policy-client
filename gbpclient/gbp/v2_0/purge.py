@@ -93,8 +93,6 @@ class Purge(n_purge.Purge):
                           'external_segment', 'policy_rule_set',
                           'policy_rule', 'policy_classifier',
                           'policy_action', 'network_service_policy',
-                          'servicechain_instance', 'servicechain_spec',
-                          'servicechain_node', 'service_profile',
                           'application_policy_group']
         deleted = {}
         failed = {}

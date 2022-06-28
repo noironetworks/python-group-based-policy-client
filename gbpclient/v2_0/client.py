@@ -148,14 +148,6 @@ class Client(clientV2_0.Client):
     policy_rule_path = "/grouppolicy/policy_rules/%s"
     policy_rule_sets_path = "/grouppolicy/policy_rule_sets"
     policy_rule_set_path = "/grouppolicy/policy_rule_sets/%s"
-    service_profiles_path = "/servicechain/service_profiles"
-    service_profile_path = "/servicechain/service_profiles/%s"
-    servicechain_nodes_path = "/servicechain/servicechain_nodes"
-    servicechain_node_path = "/servicechain/servicechain_nodes/%s"
-    servicechain_specs_path = "/servicechain/servicechain_specs"
-    servicechain_spec_path = "/servicechain/servicechain_specs/%s"
-    servicechain_instances_path = "/servicechain/servicechain_instances"
-    servicechain_instance_path = "/servicechain/servicechain_instances/%s"
 
     # API has no way to report plurals, so we have to hard code them
     EXTED_PLURALS = {'policy_targets': 'policy_target',
@@ -507,110 +499,6 @@ class Client(clientV2_0.Client):
     def delete_policy_rule_set(self, policy_rule_set):
         """Deletes the specified Policy Rule Set."""
         return self.delete(self.policy_rule_set_path % (policy_rule_set))
-
-    def list_service_profiles(self, retrieve_all=True, **_params):
-
-        """Fetches a list of all service profiles for a tenant."""
-        # Pass filters in "params" argument to do_request
-
-        return self.list('service_profiles', self.service_profiles_path,
-                         retrieve_all, **_params)
-
-    def show_service_profile(self, service_profile, **_params):
-        """Fetches information of a certain service profile."""
-        return self.get(self.service_profile_path % (service_profile),
-                        params=_params)
-
-    def create_service_profile(self, body=None):
-        """Creates a new service profile."""
-        return self.post(self.service_profiles_path, body=body)
-
-    def update_service_profile(self, service_profile, body=None):
-        """Updates a service profile."""
-        return self.put(self.service_profile_path % (service_profile),
-                        body=body)
-
-    def delete_service_profile(self, service_profile):
-        """Deletes the specified service profile."""
-        return self.delete(self.service_profile_path % (service_profile))
-
-    def list_servicechain_nodes(self, retrieve_all=True, **_params):
-
-        """Fetches a list of all service chain nodes for a tenant."""
-        # Pass filters in "params" argument to do_request
-
-        return self.list('servicechain_nodes', self.servicechain_nodes_path,
-                         retrieve_all, **_params)
-
-    def show_servicechain_node(self, servicechain_node, **_params):
-        """Fetches information of a certain service chain node."""
-        return self.get(self.servicechain_node_path % (servicechain_node),
-                        params=_params)
-
-    def create_servicechain_node(self, body=None):
-        """Creates a new service chain node."""
-        return self.post(self.servicechain_nodes_path, body=body)
-
-    def update_servicechain_node(self, servicechain_node, body=None):
-        """Updates a service chain node."""
-        return self.put(self.servicechain_node_path % (servicechain_node),
-                        body=body)
-
-    def delete_servicechain_node(self, servicechain_node):
-        """Deletes the specified service chain node."""
-        return self.delete(self.servicechain_node_path % (servicechain_node))
-
-    def list_servicechain_specs(self, retrieve_all=True, **_params):
-        """Fetches a list of all service chain specs for a tenant."""
-        # Pass filters in "params" argument to do_request
-
-        return self.list('servicechain_specs', self.servicechain_specs_path,
-                         retrieve_all, **_params)
-
-    def show_servicechain_spec(self, servicechain_spec, **_params):
-        """Fetches information of a certain service chain spec."""
-        return self.get(self.servicechain_spec_path % (servicechain_spec),
-                        params=_params)
-
-    def create_servicechain_spec(self, body=None):
-        """Creates a new service chain spec."""
-        return self.post(self.servicechain_specs_path, body=body)
-
-    def update_servicechain_spec(self, servicechain_spec, body=None):
-        """Updates a service chain spec."""
-        return self.put(self.servicechain_spec_path % (servicechain_spec),
-                        body=body)
-
-    def delete_servicechain_spec(self, servicechain_spec):
-        """Deletes the specified service chain spec."""
-        return self.delete(self.servicechain_spec_path % (servicechain_spec))
-
-    def list_servicechain_instances(self, retrieve_all=True, **_params):
-        """Fetches a list of all service chain instances for a tenant."""
-        # Pass filters in "params" argument to do_request
-
-        return self.list('servicechain_instances',
-                         self.servicechain_instances_path,
-                         retrieve_all, **_params)
-
-    def show_servicechain_instance(self, servicechain_instance, **_params):
-        """Fetches information of a certain service chain instance."""
-        return self.get(self.servicechain_instance_path %
-                        (servicechain_instance), params=_params)
-
-    def create_servicechain_instance(self, body=None):
-        """Creates a new service chain instance."""
-        return self.post(self.servicechain_instances_path, body=body)
-
-    def update_servicechain_instance(self, servicechain_instance, body=None):
-        """Updates a service chain instance."""
-        return self.put(self.servicechain_instance_path %
-                        (servicechain_instance), body=body)
-
-    def delete_servicechain_instance(self, servicechain_instance):
-        """Deletes the specified service chain instance."""
-        return self.delete(self.servicechain_instance_path %
-                           (servicechain_instance))
 
     def purge(self, tenant_id):
         purge_obj = gbpclient_purge.PurgeAPI(None, None, self)

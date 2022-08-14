@@ -29,8 +29,8 @@ _get_attrs_address_scope_new = address_scope._get_attrs
 
 def _get_attrs_address_scope_extension(client_manager, parsed_args):
     attrs = _get_attrs_address_scope_new(client_manager, parsed_args)
-    if 'apic_distinguished_names' in parsed_args and \
-       parsed_args.apic_distinguished_names:
+    if ('apic_distinguished_names' in parsed_args and
+        parsed_args.apic_distinguished_names):
         result = {}
         for element in parsed_args.apic_distinguished_names:
             result.update(element)

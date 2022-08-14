@@ -32,11 +32,11 @@ def _get_attrs_subnet_extension(client_manager, parsed_args, is_create=True):
         attrs['apic:snat_host_pool'] = True
     if parsed_args.apic_snat_host_pool_disable:
         attrs['apic:snat_host_pool'] = False
-    if 'apic_active_active_aap_enable' in parsed_args and \
-       parsed_args.apic_active_active_aap_enable:
+    if ('apic_active_active_aap_enable' in parsed_args and
+        parsed_args.apic_active_active_aap_enable):
         attrs['apic:active_active_aap'] = True
-    if 'apic_active_active_aap_disable' in parsed_args and \
-       parsed_args.apic_active_active_aap_disable:
+    if ('apic_active_active_aap_disable' in parsed_args and
+        parsed_args.apic_active_active_aap_disable):
         attrs['apic:active_active_aap'] = False
     if parsed_args.apic_snat_subnet_only_enable:
         attrs['apic:snat_subnet_only'] = True

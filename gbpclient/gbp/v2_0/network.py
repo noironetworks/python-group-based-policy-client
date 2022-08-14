@@ -29,11 +29,11 @@ _get_attrs_network_new = network._get_attrs_network
 
 def _get_attrs_network_extension(client_manager, parsed_args):
     attrs = _get_attrs_network_new(client_manager, parsed_args)
-    if 'apic_svi_enable' in parsed_args and \
-       parsed_args.apic_svi_enable:
+    if ('apic_svi_enable' in parsed_args and
+        parsed_args.apic_svi_enable):
         attrs['apic:svi'] = True
-    if 'apic_svi_disable' in parsed_args and \
-       parsed_args.apic_svi_disable:
+    if ('apic_svi_disable' in parsed_args and
+        parsed_args.apic_svi_disable):
         attrs['apic:svi'] = False
     if parsed_args.apic_bgp_enable:
         attrs['apic:bgp_enable'] = True
@@ -79,8 +79,8 @@ def _get_attrs_network_extension(client_manager, parsed_args):
     if parsed_args.apic_epg_contract_masters:
         attrs['apic:epg_contract_masters'
               ] = parsed_args.apic_epg_contract_masters.split(",")
-    if 'apic_distinguished_names' in parsed_args and \
-       parsed_args.apic_distinguished_names:
+    if ('apic_distinguished_names' in parsed_args and
+        parsed_args.apic_distinguished_names):
         result = {}
         for element in parsed_args.apic_distinguished_names:
             result.update(element)
@@ -95,8 +95,8 @@ def _get_attrs_network_extension(client_manager, parsed_args):
         if parsed_args.apic_external_cidrs:
             attrs['apic:external_cidrs'
                   ] = parsed_args.apic_external_cidrs.split(",")
-        if 'apic_no_external_cidrs' in parsed_args and \
-           parsed_args.apic_no_external_cidrs:
+        if ('apic_no_external_cidrs' in parsed_args and
+            parsed_args.apic_no_external_cidrs):
             attrs['apic:external_cidrs'] = []
     return attrs
 

@@ -110,10 +110,10 @@ class CreatePolicyTarget(neutronV20.CreateCommand):
                                ['name', 'tenant_id', 'description',
                                 'segmentation_labels'])
         if parsed_args.policy_target_group:
-            body[self.resource]['policy_target_group_id'] = \
+            body[self.resource]['policy_target_group_id'] = (
                 neutronV20.find_resourceid_by_name_or_id(
                     self.get_client(), 'policy_target_group',
-                    parsed_args.policy_target_group)
+                    parsed_args.policy_target_group))
 
         if parsed_args.port_id:
             body[self.resource]['port_id'] = (
@@ -242,10 +242,10 @@ class CreatePolicyTargetGroup(neutronV20.CreateCommand):
         body = {self.resource: {}, }
 
         if parsed_args.l2_policy:
-            body[self.resource]['l2_policy_id'] = \
+            body[self.resource]['l2_policy_id'] = (
                 neutronV20.find_resourceid_by_name_or_id(
                     self.get_client(), 'l2_policy',
-                    parsed_args.l2_policy)
+                    parsed_args.l2_policy))
 
         if parsed_args.application_policy_group:
             body[self.resource]['application_policy_group_id'] = (
@@ -254,26 +254,26 @@ class CreatePolicyTargetGroup(neutronV20.CreateCommand):
                     parsed_args.application_policy_group))
 
         if parsed_args.network_service_policy:
-            body[self.resource]['network_service_policy_id'] = \
+            body[self.resource]['network_service_policy_id'] = (
                 neutronV20.find_resourceid_by_name_or_id(
                     self.get_client(), 'network_service_policy',
-                    parsed_args.network_service_policy)
+                    parsed_args.network_service_policy))
 
         if parsed_args.provided_policy_rule_sets:
             for key in parsed_args.provided_policy_rule_sets.keys():
                 id_key = neutronV20.find_resourceid_by_name_or_id(
                     self.get_client(), 'policy_rule_set',
                     key)
-                parsed_args.provided_policy_rule_sets[id_key] = \
-                    parsed_args.provided_policy_rule_sets.pop(key)
+                parsed_args.provided_policy_rule_sets[id_key] = (
+                    parsed_args.provided_policy_rule_sets.pop(key))
 
         if parsed_args.consumed_policy_rule_sets:
             for key in parsed_args.consumed_policy_rule_sets.keys():
                 id_key = neutronV20.find_resourceid_by_name_or_id(
                     self.get_client(), 'policy_rule_set',
                     key)
-                parsed_args.consumed_policy_rule_sets[id_key] = \
-                    parsed_args.consumed_policy_rule_sets.pop(key)
+                parsed_args.consumed_policy_rule_sets[id_key] = (
+                    parsed_args.consumed_policy_rule_sets.pop(key))
 
         neutronV20.update_dict(parsed_args, body[self.resource],
                                ['name', 'tenant_id', 'description',
@@ -336,10 +336,10 @@ class UpdatePolicyTargetGroup(neutronV20.UpdateCommand):
         body = {self.resource: {}, }
 
         if parsed_args.l2_policy:
-            body[self.resource]['l2_policy_id'] = \
+            body[self.resource]['l2_policy_id'] = (
                 neutronV20.find_resourceid_by_name_or_id(
                     self.get_client(), 'l2_policy',
-                    parsed_args.l2_policy)
+                    parsed_args.l2_policy))
 
         if parsed_args.application_policy_group == '':
             body[self.resource]['application_policy_group_id'] = None
@@ -352,26 +352,26 @@ class UpdatePolicyTargetGroup(neutronV20.UpdateCommand):
         if parsed_args.network_service_policy == '':
             body[self.resource]['network_service_policy_id'] = None
         elif parsed_args.network_service_policy:
-            body[self.resource]['network_service_policy_id'] = \
+            body[self.resource]['network_service_policy_id'] = (
                 neutronV20.find_resourceid_by_name_or_id(
                     self.get_client(), 'network_service_policy',
-                    parsed_args.network_service_policy)
+                    parsed_args.network_service_policy))
 
         if parsed_args.provided_policy_rule_sets:
             for key in parsed_args.provided_policy_rule_sets.keys():
                 id_key = neutronV20.find_resourceid_by_name_or_id(
                     self.get_client(), 'policy_rule_set',
                     key)
-                parsed_args.provided_policy_rule_sets[id_key] = \
-                    parsed_args.provided_policy_rule_sets.pop(key)
+                parsed_args.provided_policy_rule_sets[id_key] = (
+                    parsed_args.provided_policy_rule_sets.pop(key))
 
         if parsed_args.consumed_policy_rule_sets:
             for key in parsed_args.consumed_policy_rule_sets.keys():
                 id_key = neutronV20.find_resourceid_by_name_or_id(
                     self.get_client(), 'policy_rule_set',
                     key)
-                parsed_args.consumed_policy_rule_sets[id_key] = \
-                    parsed_args.consumed_policy_rule_sets.pop(key)
+                parsed_args.consumed_policy_rule_sets[id_key] = (
+                    parsed_args.consumed_policy_rule_sets.pop(key))
 
         neutronV20.update_dict(parsed_args, body[self.resource],
                                ['name', 'tenant_id', 'description',
@@ -443,18 +443,18 @@ class CreateL2Policy(neutronV20.CreateCommand):
                                ['name', 'tenant_id', 'description', 'shared',
                                 'inject_default_route'])
         if parsed_args.l3_policy:
-            body[self.resource]['l3_policy_id'] = \
+            body[self.resource]['l3_policy_id'] = (
                 neutronV20.find_resourceid_by_name_or_id(
                     self.get_client(), 'l3_policy',
-                    parsed_args.l3_policy)
+                    parsed_args.l3_policy))
         if parsed_args.network:
             body[self.resource]['network_id'] = (
                 parsed_args.network)
         if parsed_args.reuse_bd:
-            body[self.resource]['reuse_bd'] = \
+            body[self.resource]['reuse_bd'] = (
                 neutronV20.find_resourceid_by_name_or_id(
                     self.get_client(), 'l2_policy',
-                    parsed_args.reuse_bd)
+                    parsed_args.reuse_bd))
         return body
 
 
@@ -496,10 +496,10 @@ class UpdateL2Policy(neutronV20.UpdateCommand):
                                ['name', 'tenant_id', 'description', 'shared',
                                 'inject_default_route'])
         if parsed_args.l3_policy:
-            body[self.resource]['l3_policy_id'] = \
+            body[self.resource]['l3_policy_id'] = (
                 neutronV20.find_resourceid_by_name_or_id(
                     self.get_client(), 'l3_policy',
-                    parsed_args.l3_policy)
+                    parsed_args.l3_policy))
 
         return body
 
@@ -1145,11 +1145,11 @@ class CreatePolicyRule(neutronV20.CreateCommand):
                     elem) for elem in parsed_args.actions]
 
         if parsed_args.classifier:
-            body[self.resource]['policy_classifier_id'] = \
+            body[self.resource]['policy_classifier_id'] = (
                 neutronV20.find_resourceid_by_name_or_id(
                     self.get_client(),
                     'policy_classifier',
-                    parsed_args.classifier)
+                    parsed_args.classifier))
 
         neutronV20.update_dict(parsed_args, body[self.resource],
                                ['name', 'tenant_id', 'description',
@@ -1205,11 +1205,11 @@ class UpdatePolicyRule(neutronV20.UpdateCommand):
                     elem) for elem in parsed_args.actions]
 
         if parsed_args.classifier:
-            body[self.resource]['policy_classifier_id'] = \
+            body[self.resource]['policy_classifier_id'] = (
                 neutronV20.find_resourceid_by_name_or_id(
                     self.get_client(),
                     'policy_classifier',
-                    parsed_args.classifier)
+                    parsed_args.classifier))
 
         neutronV20.update_dict(parsed_args, body[self.resource],
                                ['name', 'description',

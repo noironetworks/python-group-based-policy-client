@@ -42,6 +42,9 @@ def _get_attrs_subnet_extension(client_manager, parsed_args, is_create=True):
         attrs['apic:snat_subnet_only'] = True
     if parsed_args.apic_snat_subnet_only_disable:
         attrs['apic:snat_subnet_only'] = False
+    if ('apic_epg_subnet' in parsed_args and
+        parsed_args.apic_epg_subnet):
+        attrs['apic:epg_subnet'] = True
 
     return attrs
 
@@ -58,6 +61,8 @@ subnet_sdk.Subnet.apic_active_active_aap = resource.Body(
     'apic:active_active_aap')
 subnet_sdk.Subnet.apic_snat_subnet_only = resource.Body(
     'apic:snat_subnet_only')
+subnet_sdk.Subnet.apic_epg_subnet = resource.Body(
+    'apic:epg_subnet')
 
 
 class CreateSubnetExtension(hooks.CommandHook):
@@ -107,6 +112,14 @@ class CreateSubnetExtension(hooks.CommandHook):
             dest='apic_snat_subnet_only_disable',
             help=_("Set APIC snat subnet only to false\n"
                    "Default value for apic_snat_subnet_only is False ")
+        )
+        parser.add_argument(
+            '--apic-epg-subnet',
+            action='store_true',
+            default=False,
+            dest='apic_epg_subnet',
+            help=_("Set APIC epg subnet to true\n"
+                   "Default value for apic_epg_subnet is False ")
         )
         return parser
 

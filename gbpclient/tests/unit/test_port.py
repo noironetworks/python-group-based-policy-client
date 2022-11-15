@@ -33,7 +33,7 @@ class TestPortCreate(test_port.TestPort, test_cli20.CLITestV20Base):
         super(TestPortCreate, self).setUp()
         self.app.client_manager.network.find_extension = mock.Mock(
             return_value=self.extension_details)
-        fake_net = network_fakes.FakeNetwork.create_one_network({
+        fake_net = network_fakes.create_one_network({
             'id': self._port.network_id,
         })
         self.network.find_network = mock.Mock(return_value=fake_net)

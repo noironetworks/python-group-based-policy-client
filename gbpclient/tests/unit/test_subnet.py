@@ -31,7 +31,7 @@ class TestSubnetCreate(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
                 'tenant_id': '1',
             }
         )
-        self._network = network_fakes.FakeNetwork.create_one_network(
+        self._network = network_fakes.create_one_network(
             attrs={
                 'id': self._subnet.network_id,
             }

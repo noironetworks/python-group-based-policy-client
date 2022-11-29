@@ -52,6 +52,7 @@ class TestSubnetCreate(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
             ('apic_snat_host_pool_enable', None),
             ('apic_active_active_aap_enable', None),
             ('apic_snat_subnet_only_enable', None),
+            ('apic_epg_subnet', False)
         ]
         create_ext = subnet_ext.CreateSubnetExtension(self.app)
         parsed_args = self.check_parser_ext(
@@ -73,6 +74,7 @@ class TestSubnetCreate(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
             "--apic-snat-host-pool-enable",
             "--apic-active-active-aap-enable",
             "--apic-snat-subnet-only-enable",
+            "--apic-epg-subnet"
         ]
         verifylist = [
             ('name', self._subnet.name),
@@ -80,6 +82,7 @@ class TestSubnetCreate(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
             ('apic_snat_host_pool_enable', True),
             ('apic_active_active_aap_enable', True),
             ('apic_snat_subnet_only_enable', True),
+            ('apic_epg_subnet', True)
         ]
         create_ext = subnet_ext.CreateSubnetExtension(self.app)
         parsed_args = self.check_parser_ext(
@@ -94,6 +97,7 @@ class TestSubnetCreate(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
             'apic:active_active_aap': True,
             'apic:snat_host_pool': True,
             'apic:snat_subnet_only': True,
+            'apic:epg_subnet': True
         })
 
 

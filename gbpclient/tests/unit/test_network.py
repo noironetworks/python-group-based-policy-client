@@ -55,6 +55,7 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
             ('apic_extra_consumed_contracts', None),
             ('apic_policy_enforcement_pref', None),
             ('apic_no_nat_cidrs', None),
+            ('apic_multi_ext_nets', None),
         ]
         create_ext = network_ext.CreateNetworkExtension(self.app)
         parsed_args = self.check_parser_ext(
@@ -88,6 +89,7 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
             "--apic-extra-consumed-contracts", 'contest1',
             "--apic-policy-enforcement-pref", 'enforced',
             "--apic-no-nat-cidrs", '10.10.10.0/24',
+            "--apic-multi-ext-nets",
         ]
         verifylist = [
             ('name', self._network.name),
@@ -109,6 +111,7 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
             ('apic_extra_consumed_contracts', 'contest1'),
             ('apic_policy_enforcement_pref', 'enforced'),
             ('apic_no_nat_cidrs', '10.10.10.0/24'),
+            ('apic_multi_ext_nets', True)
         ]
         create_ext = network_ext.CreateNetworkExtension(self.app)
         parsed_args = self.check_parser_ext(
@@ -137,6 +140,7 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
             'apic:nested_domain_service_vlan': '3',
             'apic:policy_enforcement_pref': 'enforced',
             'apic:no_nat_cidrs': ['10.10.10.0/24'],
+            'apic:multi_ext_nets': True,
         })
 
     def test_create_empty_contracts(self):

@@ -93,6 +93,9 @@ def _get_attrs_network_extension(client_manager, parsed_args):
     if ('no_apic_no_nat_cidrs' in parsed_args and
         parsed_args.no_apic_no_nat_cidrs):
         attrs['apic:no_nat_cidrs'] = []
+    if ('apic_multi_ext_nets' in parsed_args and
+            parsed_args.apic_multi_ext_nets):
+        attrs['apic:multi_ext_nets'] = parsed_args.apic_multi_ext_nets
     if parsed_args.external:
         if ('apic_nat_type' in parsed_args and
             parsed_args.apic_nat_type is not None):
@@ -139,6 +142,7 @@ network_sdk.Network.apic_policy_enforcement_pref = resource.Body(
 network_sdk.Network.apic_nat_type = resource.Body('apic:nat_type')
 network_sdk.Network.apic_external_cidrs = resource.Body('apic:external_cidrs')
 network_sdk.Network.apic_no_nat_cidrs = resource.Body('apic:no_nat_cidrs')
+network_sdk.Network.apic_multi_ext_nets = resource.Body('apic:multi_ext_nets')
 
 
 class CreateNetworkExtension(hooks.CommandHook):
@@ -314,6 +318,15 @@ class CreateNetworkExtension(hooks.CommandHook):
                    "Default value is []\n"
                    "Syntax Example: 10.10.10.0/24 "
                    "or 10.10.10.0/24,20.20.20.0/24 ")
+        )
+        parser.add_argument(
+            '--apic-multi-ext-nets',
+            action='store_true',
+            default=None,
+            dest='apic_multi_ext_nets',
+            help=_("Makes it possible to associate multi external networks "
+                   "with a single L3Outside\n"
+                   "Default value is False ")
         )
         return parser
 

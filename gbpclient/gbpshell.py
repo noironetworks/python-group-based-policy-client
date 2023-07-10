@@ -675,7 +675,6 @@ class GBPShell(app.App):
         subcommand = self.command_manager.find_command(argv)
         cmd_factory, cmd_name, sub_argv = subcommand
         cmd = cmd_factory(self, self.options)
-        err = None
         result = 1
         try:
             self.prepare_to_run_command(cmd)

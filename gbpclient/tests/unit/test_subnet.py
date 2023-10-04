@@ -52,7 +52,9 @@ class TestSubnetCreate(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
             ('apic_snat_host_pool_enable', None),
             ('apic_active_active_aap_enable', None),
             ('apic_snat_subnet_only_enable', None),
-            ('apic_epg_subnet', False)
+            ('apic_epg_subnet', False),
+            ('apic_advertised_externally_disable', None),
+            ('apic_shared_between_vrfs_enable', None)
         ]
         create_ext = subnet_ext.CreateSubnetExtension(self.app)
         parsed_args = self.check_parser_ext(
@@ -74,7 +76,9 @@ class TestSubnetCreate(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
             "--apic-snat-host-pool-enable",
             "--apic-active-active-aap-enable",
             "--apic-snat-subnet-only-enable",
-            "--apic-epg-subnet"
+            "--apic-epg-subnet",
+            "--apic-advertised-externally-enable",
+            "--apic-shared-between-vrfs-enable"
         ]
         verifylist = [
             ('name', self._subnet.name),
@@ -82,7 +86,9 @@ class TestSubnetCreate(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
             ('apic_snat_host_pool_enable', True),
             ('apic_active_active_aap_enable', True),
             ('apic_snat_subnet_only_enable', True),
-            ('apic_epg_subnet', True)
+            ('apic_epg_subnet', True),
+            ('apic_advertised_externally_enable', True),
+            ('apic_shared_between_vrfs_enable', True)
         ]
         create_ext = subnet_ext.CreateSubnetExtension(self.app)
         parsed_args = self.check_parser_ext(
@@ -97,7 +103,9 @@ class TestSubnetCreate(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
             'apic:active_active_aap': True,
             'apic:snat_host_pool': True,
             'apic:snat_subnet_only': True,
-            'apic:epg_subnet': True
+            'apic:epg_subnet': True,
+            'apic:advertised_externally': True,
+            'apic:shared_between_vrfs': True
         })
 
 
@@ -135,11 +143,15 @@ class TestSubnetSet(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
             self._subnet.name,
             "--apic-snat-host-pool-disable",
             "--apic-snat-subnet-only-disable",
+            "--apic-advertised-externally-enable",
+            "--apic-shared-between-vrfs-enable",
         ]
         verifylist = [
             ('subnet', self._subnet.name),
             ('apic_snat_host_pool_disable', True),
             ('apic_snat_subnet_only_disable', True),
+            ('apic_advertised_externally_enable', True),
+            ('apic_shared_between_vrfs_enable', True),
         ]
         set_ext = subnet_ext.SetSubnetExtension(self.app)
         parsed_args = self.check_parser_ext(
@@ -149,6 +161,8 @@ class TestSubnetSet(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
         attrs = {
             'apic:snat_host_pool': False,
             'apic:snat_subnet_only': False,
+            'apic:advertised_externally': True,
+            'apic:shared_between_vrfs': True,
         }
         self.network.update_subnet.assert_called_with(self._subnet, **attrs)
         self.assertIsNone(result)

@@ -45,6 +45,14 @@ def _get_attrs_subnet_extension(client_manager, parsed_args, is_create=True):
     if ('apic_epg_subnet' in parsed_args and
         parsed_args.apic_epg_subnet):
         attrs['apic:epg_subnet'] = True
+    if parsed_args.apic_advertised_externally_enable:
+        attrs['apic:advertised_externally'] = True
+    if parsed_args.apic_advertised_externally_disable:
+        attrs['apic:advertised_externally'] = False
+    if parsed_args.apic_shared_between_vrfs_enable:
+        attrs['apic:shared_between_vrfs'] = True
+    if parsed_args.apic_shared_between_vrfs_disable:
+        attrs['apic:shared_between_vrfs'] = False
 
     return attrs
 
@@ -63,6 +71,10 @@ subnet_sdk.Subnet.apic_snat_subnet_only = resource.Body(
     'apic:snat_subnet_only')
 subnet_sdk.Subnet.apic_epg_subnet = resource.Body(
     'apic:epg_subnet')
+subnet_sdk.Subnet.apic_advertised_externally = resource.Body(
+    'apic:advertised_externally')
+subnet_sdk.Subnet.apic_shared_between_vrfs = resource.Body(
+    'apic:shared_between_vrfs')
 
 
 class CreateSubnetExtension(hooks.CommandHook):
@@ -121,6 +133,36 @@ class CreateSubnetExtension(hooks.CommandHook):
             help=_("Set APIC epg subnet to true\n"
                    "Default value for apic_epg_subnet is False ")
         )
+        parser.add_argument(
+            '--apic-advertised-externally-enable',
+            action='store_true',
+            dest='apic_advertised_externally_enable',
+            help=_("Set APIC advertised externally to true\n"
+                   "Default value for apic_advertised_externally is True ")
+        )
+        parser.add_argument(
+            '--apic-advertised-externally-disable',
+            action='store_true',
+            default=None,
+            dest='apic_advertised_externally_disable',
+            help=_("Set APIC advertised externally to false\n"
+                   "Default value for apic_advertised_externally is True ")
+        )
+        parser.add_argument(
+            '--apic-shared-between-vrfs-enable',
+            action='store_true',
+            default=None,
+            dest='apic_shared_between_vrfs_enable',
+            help=_("Set APIC shared between vrfs to true\n"
+                   "Default value for apic_shared_between_vrfs is False ")
+        )
+        parser.add_argument(
+            '--apic-shared-between-vrfs-disable',
+            action='store_true',
+            dest='apic_shared_between_vrfs_disable',
+            help=_("Set APIC shared between vrfs to false\n"
+                   "Default value for apic_shared_between_vrfs is False ")
+        )
         return parser
 
     def get_epilog(self):
@@ -165,6 +207,36 @@ class SetSubnetExtension(hooks.CommandHook):
             dest='apic_snat_subnet_only_disable',
             help=_("Set APIC snat subnet only to false\n"
                    "Default value for apic_snat_subnet_only is False ")
+        )
+        parser.add_argument(
+            '--apic-advertised-externally-enable',
+            action='store_true',
+            dest='apic_advertised_externally_enable',
+            help=_("Set APIC advertised externally to true\n"
+                   "Default value for apic_advertised_externally is True ")
+        )
+        parser.add_argument(
+            '--apic-advertised-externally-disable',
+            action='store_true',
+            default=None,
+            dest='apic_advertised_externally_disable',
+            help=_("Set APIC advertised externally to false\n"
+                   "Default value for apic_advertised_externally is True ")
+        )
+        parser.add_argument(
+            '--apic-shared-between-vrfs-enable',
+            action='store_true',
+            default=None,
+            dest='apic_shared_between_vrfs_enable',
+            help=_("Set APIC shared between vrfs to true\n"
+                   "Default value for apic_shared_between_vrfs is False ")
+        )
+        parser.add_argument(
+            '--apic-shared-between-vrfs-disable',
+            action='store_true',
+            dest='apic_shared_between_vrfs_disable',
+            help=_("Set APIC shared between vrfs to false\n"
+                   "Default value for apic_shared_between_vrfs is False ")
         )
         return parser
 

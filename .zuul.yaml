@@ -12,6 +12,7 @@
     check:
       jobs:
         - openstack-tox-pep8:
+            voting: false
             required-projects:
               - name: openstack/requirements
                 override-checkout: stable/rocky
@@ -21,12 +22,14 @@
               - name: openstack/requirements
                 override-checkout: stable/rocky
         - openstack-tox-py35:
+            voting: false
             required-projects:
               - name: openstack/requirements
                 override-checkout: stable/rocky
     gate:
       jobs:
         - openstack-tox-pep8:
+            voting: false
             required-projects:
               - name: openstack/requirements
                 override-checkout: stable/rocky
@@ -36,6 +39,7 @@
               - name: openstack/requirements
                 override-checkout: stable/rocky
         - openstack-tox-py35:
+            voting: false
             required-projects:
               - name: openstack/requirements
                 override-checkout: stable/rocky

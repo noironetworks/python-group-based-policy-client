@@ -26,7 +26,8 @@ class TestRouterCreate(test_router.TestRouter, test_cli20.CLITestV20Base):
     def setUp(self):
         super(TestRouterCreate, self).setUp()
         self.new_router = test_router.TestCreateRouter.new_router
-        self.network.create_router = mock.Mock(return_value=self.new_router)
+        self.network_client.create_router = mock.Mock(
+            return_value=self.new_router)
         self.cmd = router.CreateRouter(self.app, self.namespace)
 
     def test_create_default_options(self):
@@ -43,7 +44,7 @@ class TestRouterCreate(test_router.TestRouter, test_cli20.CLITestV20Base):
             self.cmd, arglist, verifylist, create_ext)
         columns, data = self.cmd.take_action(parsed_args)
 
-        self.network.create_router.assert_called_once_with(**{
+        self.network_client.create_router.assert_called_once_with(**{
             'admin_state_up': True,
             'name': self.new_router.name,
         })
@@ -64,7 +65,7 @@ class TestRouterCreate(test_router.TestRouter, test_cli20.CLITestV20Base):
             self.cmd, arglist, verifylist, create_ext)
         columns, data = self.cmd.take_action(parsed_args)
 
-        self.network.create_router.assert_called_once_with(**{
+        self.network_client.create_router.assert_called_once_with(**{
             'admin_state_up': True,
             'name': self.new_router.name,
             'apic:external_provided_contracts': ['ptest1'],
@@ -82,12 +83,14 @@ class TestRouterSet(test_router.TestRouter, test_cli20.CLITestV20Base):
 
     def setUp(self):
         super(TestRouterSet, self).setUp()
-        self.network.router_add_gateway = mock.Mock()
-        self.network.update_router = mock.Mock(return_value=None)
-        self.network.set_tags = mock.Mock(return_value=None)
-        self.network.find_router = mock.Mock(return_value=self._router)
-        self.network.find_network = mock.Mock(return_value=self._network)
-        self.network.find_subnet = mock.Mock(return_value=self._subnet)
+        self.network_client.router_add_gateway = mock.Mock()
+        self.network_client.update_router = mock.Mock(return_value=None)
+        self.network_client.set_tags = mock.Mock(return_value=None)
+        self.network_client.find_router = mock.Mock(
+            return_value=self._router)
+        self.network_client.find_network = mock.Mock(
+            return_value=self._network)
+        self.network_client.find_subnet = mock.Mock(return_value=self._subnet)
         self.cmd = router.SetRouter(self.app, self.namespace)
 
     def test_set_no_options(self):
@@ -102,8 +105,8 @@ class TestRouterSet(test_router.TestRouter, test_cli20.CLITestV20Base):
             self.cmd, arglist, verifylist, set_ext)
         result = self.cmd.take_action(parsed_args)
 
-        self.assertFalse(self.network.update_router.called)
-        self.assertFalse(self.network.set_tags.called)
+        self.assertFalse(self.network_client.update_router.called)
+        self.assertFalse(self.network_client.set_tags.called)
         self.assertIsNone(result)
 
     def test_set_all_valid_options(self):
@@ -126,6 +129,6 @@ class TestRouterSet(test_router.TestRouter, test_cli20.CLITestV20Base):
             'apic:external_provided_contracts': ['ptest1', 'ptest11'],
             'apic:external_consumed_contracts': ['ctest1', 'ctest11'],
         }
-        self.network.update_router.assert_called_once_with(
+        self.network_client.update_router.assert_called_once_with(
             self._router, **attrs)
         self.assertIsNone(result)

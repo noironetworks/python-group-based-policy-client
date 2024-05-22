@@ -28,7 +28,7 @@ class TestAddressScopeCreate(
         super(TestAddressScopeCreate, self).setUp()
         self.new_address_scope = (
             test_address_scope.TestCreateAddressScope.new_address_scope)
-        self.network.create_address_scope = mock.Mock(
+        self.network_client.create_address_scope = mock.Mock(
             return_value=self.new_address_scope)
 
         self.cmd = address_scope.CreateAddressScope(self.app, self.namespace)
@@ -47,7 +47,7 @@ class TestAddressScopeCreate(
             self.cmd, arglist, verifylist, create_ext)
         columns, data = self.cmd.take_action(parsed_args)
 
-        self.network.create_address_scope.assert_called_once_with(**{
+        self.network_client.create_address_scope.assert_called_once_with(**{
             'ip_version': self.new_address_scope.ip_version,
             'name': self.new_address_scope.name,
         })
@@ -67,7 +67,7 @@ class TestAddressScopeCreate(
             self.cmd, arglist, verifylist, create_ext)
         columns, data = self.cmd.take_action(parsed_args)
 
-        self.network.create_address_scope.assert_called_once_with(**{
+        self.network_client.create_address_scope.assert_called_once_with(**{
             'ip_version': self.new_address_scope.ip_version,
             'apic:distinguished_names': {"VRF": "test1"},
             'name': self.new_address_scope.name,

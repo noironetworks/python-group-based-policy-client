@@ -27,7 +27,7 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
 
     def setUp(self):
         super(TestNetworkCreate, self).setUp()
-        self.network.create_network = mock.Mock(
+        self.network_client.create_network = mock.Mock(
             return_value=self._network)
         self.cmd = network.CreateNetwork(self.app, self.namespace)
 
@@ -62,7 +62,7 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
             self.cmd, arglist, verifylist, create_ext)
         columns, data = self.cmd.take_action(parsed_args)
 
-        self.network.create_network.assert_called_once_with(**{
+        self.network_client.create_network.assert_called_once_with(**{
             'admin_state_up': True,
             'name': self._network.name,
             'router:external': True,
@@ -118,7 +118,7 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
             self.cmd, arglist, verifylist, create_ext)
         columns, data = self.cmd.take_action(parsed_args)
 
-        self.network.create_network.assert_called_once_with(**{
+        self.network_client.create_network.assert_called_once_with(**{
             'admin_state_up': True,
             'name': self._network.name,
             'router:external': True,
@@ -159,7 +159,7 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
             self.cmd, arglist, verifylist, create_ext)
         columns, data = self.cmd.take_action(parsed_args)
 
-        self.network.create_network.assert_called_once_with(**{
+        self.network_client.create_network.assert_called_once_with(**{
             'admin_state_up': True,
             'name': self._network.name,
             'apic:extra_consumed_contracts': [],
@@ -188,7 +188,7 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
             self.cmd, arglist, verifylist, create_ext)
         columns, data = self.cmd.take_action(parsed_args)
 
-        self.network.create_network.assert_called_once_with(**{
+        self.network_client.create_network.assert_called_once_with(**{
             'admin_state_up': True,
             'name': self._network.name,
             'router:external': True,
@@ -207,8 +207,9 @@ class TestNetworkSet(test_network.TestNetwork, test_cli20.CLITestV20Base):
 
     def setUp(self):
         super(TestNetworkSet, self).setUp()
-        self.network.update_network = mock.Mock(return_value=None)
-        self.network.find_network = mock.Mock(return_value=self._network)
+        self.network_client.update_network = mock.Mock(return_value=None)
+        self.network_client.find_network = mock.Mock(
+            return_value=self._network)
         self.cmd = network.SetNetwork(self.app, self.namespace)
 
     def test_set_no_options(self):
@@ -237,7 +238,7 @@ class TestNetworkSet(test_network.TestNetwork, test_cli20.CLITestV20Base):
             self.cmd, arglist, verifylist, set_ext)
         result = self.cmd.take_action(parsed_args)
 
-        self.assertFalse(self.network.update_network.called)
+        self.assertFalse(self.network_client.update_network.called)
         self.assertIsNone(result)
 
     def test_set_all_valid_options(self):
@@ -301,7 +302,7 @@ class TestNetworkSet(test_network.TestNetwork, test_cli20.CLITestV20Base):
             'apic:no_nat_cidrs': ['10.10.10.0/24'],
         }
 
-        self.network.update_network.assert_called_once_with(
+        self.network_client.update_network.assert_called_once_with(
             self._network, **attrs)
         self.assertIsNone(result)
 
@@ -342,6 +343,6 @@ class TestNetworkSet(test_network.TestNetwork, test_cli20.CLITestV20Base):
             'apic:no_nat_cidrs': [],
         }
 
-        self.network.update_network.assert_called_once_with(
+        self.network_client.update_network.assert_called_once_with(
             self._network, **attrs)
         self.assertIsNone(result)

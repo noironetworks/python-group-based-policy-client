@@ -36,8 +36,10 @@ class TestSubnetCreate(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
                 'id': self._subnet.network_id,
             }
         )
-        self.network.create_subnet = mock.Mock(return_value=self._subnet)
-        self.network.find_network = mock.Mock(return_value=self._network)
+        self.network_client.create_subnet = mock.Mock(
+            return_value=self._subnet)
+        self.network_client.find_network = mock.Mock(
+            return_value=self._network)
         self.cmd = subnet.CreateSubnet(self.app, self.namespace)
 
     def test_create_default_options(self):
@@ -62,7 +64,7 @@ class TestSubnetCreate(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
             self.cmd, arglist, verifylist, create_ext)
         columns, data = self.cmd.take_action(parsed_args)
 
-        self.network.create_subnet.assert_called_once_with(**{
+        self.network_client.create_subnet.assert_called_once_with(**{
             'ip_version': 4,
             'cidr': '10.10.10.0/24',
             'name': self._subnet.name,
@@ -98,7 +100,7 @@ class TestSubnetCreate(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
             self.cmd, arglist, verifylist, create_ext)
         columns, data = self.cmd.take_action(parsed_args)
 
-        self.network.create_subnet.assert_called_once_with(**{
+        self.network_client.create_subnet.assert_called_once_with(**{
             'ip_version': 4,
             'cidr': '10.10.10.0/24',
             'name': self._subnet.name,
@@ -121,8 +123,8 @@ class TestSubnetSet(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
 
     def setUp(self):
         super(TestSubnetSet, self).setUp()
-        self.network.update_subnet = mock.Mock(return_value=None)
-        self.network.find_subnet = mock.Mock(return_value=self._subnet)
+        self.network_client.update_subnet = mock.Mock(return_value=None)
+        self.network_client.find_subnet = mock.Mock(return_value=self._subnet)
         self.cmd = subnet.SetSubnet(self.app, self.namespace)
 
     def test_set_no_options(self):
@@ -139,7 +141,7 @@ class TestSubnetSet(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
             self.cmd, arglist, verifylist, set_ext)
         result = self.cmd.take_action(parsed_args)
 
-        self.assertFalse(self.network.update_subnet.called)
+        self.assertFalse(self.network_client.update_subnet.called)
         self.assertIsNone(result)
 
     def test_set_all_valid_options(self):
@@ -171,5 +173,6 @@ class TestSubnetSet(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
             'apic:shared_between_vrfs': True,
             'apic:router_gw_ip_pool': True
         }
-        self.network.update_subnet.assert_called_with(self._subnet, **attrs)
+        self.network_client.update_subnet.assert_called_with(
+            self._subnet, **attrs)
         self.assertIsNone(result)

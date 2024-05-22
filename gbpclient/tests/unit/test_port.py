@@ -26,7 +26,7 @@ class TestPortCreate(test_port.TestPort, test_cli20.CLITestV20Base):
 
     _port = test_port.TestCreatePort._port
     extension_details = (
-        network_fakes.FakeExtension.create_one_extension()
+        network_fakes.create_one_extension()
     )
 
     def setUp(self):
@@ -36,8 +36,8 @@ class TestPortCreate(test_port.TestPort, test_cli20.CLITestV20Base):
         fake_net = network_fakes.create_one_network({
             'id': self._port.network_id,
         })
-        self.network.find_network = mock.Mock(return_value=fake_net)
-        self.network.create_port = mock.Mock(
+        self.network_client.find_network = mock.Mock(return_value=fake_net)
+        self.network_client.create_port = mock.Mock(
             return_value=self._port)
         self.cmd = port.CreatePort(self.app, self.namespace)
 
@@ -56,7 +56,7 @@ class TestPortCreate(test_port.TestPort, test_cli20.CLITestV20Base):
             self.cmd, arglist, verifylist, create_ext)
         columns, data = self.cmd.take_action(parsed_args)
 
-        self.network.create_port.assert_called_once_with(**{
+        self.network_client.create_port.assert_called_once_with(**{
             'admin_state_up': True,
             'name': self._port.name,
             'network_id': self._port.network_id,
@@ -79,7 +79,7 @@ class TestPortCreate(test_port.TestPort, test_cli20.CLITestV20Base):
             self.cmd, arglist, verifylist, create_ext)
         columns, data = self.cmd.take_action(parsed_args)
 
-        self.network.create_port.assert_called_once_with(**{
+        self.network_client.create_port.assert_called_once_with(**{
             'admin_state_up': True,
             'name': self._port.name,
             'apic:erspan_config': [{"dest_ip": "10.0.0.0",
@@ -97,8 +97,8 @@ class TestPortSet(test_port.TestPort, test_cli20.CLITestV20Base):
 
     def setUp(self):
         super(TestPortSet, self).setUp()
-        self.network.update_port = mock.Mock(return_value=None)
-        self.network.find_port = mock.Mock(return_value=self._port)
+        self.network_client.update_port = mock.Mock(return_value=None)
+        self.network_client.find_port = mock.Mock(return_value=self._port)
         self.cmd = port.SetPort(self.app, self.namespace)
 
     def test_set_no_options(self):
@@ -115,7 +115,7 @@ class TestPortSet(test_port.TestPort, test_cli20.CLITestV20Base):
             self.cmd, arglist, verifylist, set_ext)
         result = self.cmd.take_action(parsed_args)
 
-        self.assertFalse(self.network.update_port.called)
+        self.assertFalse(self.network_client.update_port.called)
         self.assertIsNone(result)
 
     def test_set_all_valid_options(self):
@@ -140,6 +140,6 @@ class TestPortSet(test_port.TestPort, test_cli20.CLITestV20Base):
                                     "direction": "in"}],
         }
 
-        self.network.update_port.assert_called_once_with(
+        self.network_client.update_port.assert_called_once_with(
             self._port, **attrs)
         self.assertIsNone(result)

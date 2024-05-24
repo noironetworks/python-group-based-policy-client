@@ -53,6 +53,10 @@ def _get_attrs_subnet_extension(client_manager, parsed_args, is_create=True):
         attrs['apic:shared_between_vrfs'] = True
     if parsed_args.apic_shared_between_vrfs_disable:
         attrs['apic:shared_between_vrfs'] = False
+    if parsed_args.apic_router_gw_ip_pool_enable:
+        attrs['apic:router_gw_ip_pool'] = True
+    if parsed_args.apic_router_gw_ip_pool_disable:
+        attrs['apic:router_gw_ip_pool'] = False
 
     return attrs
 
@@ -75,6 +79,8 @@ subnet_sdk.Subnet.apic_advertised_externally = resource.Body(
     'apic:advertised_externally')
 subnet_sdk.Subnet.apic_shared_between_vrfs = resource.Body(
     'apic:shared_between_vrfs')
+subnet_sdk.Subnet.apic_router_gw_ip_pool = resource.Body(
+    'apic:router_gw_ip_pool')
 
 
 class CreateSubnetExtension(hooks.CommandHook):
@@ -163,6 +169,21 @@ class CreateSubnetExtension(hooks.CommandHook):
             help=_("Set APIC shared between vrfs to false\n"
                    "Default value for apic_shared_between_vrfs is False ")
         )
+        parser.add_argument(
+            '--apic_router_gw_ip_pool_enable',
+            action='store_true',
+            default=None,
+            dest='apic_router_gw_ip_pool_enable',
+            help=_("Set APIC router gw ip pool to true\n"
+                   "Default value for apic_router_gw_ip_pool is False ")
+        )
+        parser.add_argument(
+            '--apic_router_gw_ip_pool_disable',
+            action='store_true',
+            dest='apic_router_gw_ip_pool_disable',
+            help=_("Set APIC router gw ip pool to false\n"
+                   "Default value for apic_router_gw_ip_pool is False ")
+        )
         return parser
 
     def get_epilog(self):
@@ -237,6 +258,21 @@ class SetSubnetExtension(hooks.CommandHook):
             dest='apic_shared_between_vrfs_disable',
             help=_("Set APIC shared between vrfs to false\n"
                    "Default value for apic_shared_between_vrfs is False ")
+        )
+        parser.add_argument(
+            '--apic_router_gw_ip_pool_enable',
+            action='store_true',
+            default=None,
+            dest='apic_router_gw_ip_pool_enable',
+            help=_("Set APIC router gw ip pool to true\n"
+                   "Default value for apic_router_gw_ip_pool is False ")
+        )
+        parser.add_argument(
+            '--apic_router_gw_ip_pool_disable',
+            action='store_true',
+            dest='apic_router_gw_ip_pool_disable',
+            help=_("Set APIC router gw ip pool to false\n"
+                   "Default value for apic_router_gw_ip_pool is False ")
         )
         return parser
 

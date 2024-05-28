@@ -11,6 +11,7 @@
 #    under the License.
 #
 
+import errno
 import re
 import sys
 
@@ -73,12 +74,14 @@ class Purge(n_purge.Purge):
                     sys.stdout.write("\rPurging resources: %d%% complete." %
                                      percent_complete)
                     sys.stdout.flush()
-                except Exception:
+                except IOError as e:
                     # A broken pipe IOError exception might get thrown if
                     # invoked from our MD's keystone tenant delete handler
                     # code. We should just ignore that then continue to
                     # purge the rest of the resources.
-                    continue
+                    if e.errno == errno.EPIPE:
+                        continue
+
         return (deleted, failed, failures)
 
     def take_action(self, parsed_args):

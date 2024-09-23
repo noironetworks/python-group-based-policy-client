@@ -28,6 +28,7 @@ from gbpclient.v2_0 import client
 from neutronclient.common import constants
 from neutronclient.common import exceptions
 from neutronclient.tests.unit import test_http
+from openstackclient.tests.unit import fakes
 
 API_VERSION = "2.0"
 TOKEN = test_http.AUTH_TOKEN
@@ -50,19 +51,9 @@ class ParserException(Exception):
     pass
 
 
-class FakeStdout(object):
-
-    def __init__(self):
-        self.content = []
-
-    def write(self, text):
-        self.content.append(text)
-
-    def make_string(self):
-        result = ''
-        for line in self.content:
-            result += encodeutils.safe_decode(line, 'utf-8')
-        return result
+class FakeStdout(fakes.FakeStdout):
+    def isatty(self):
+        return True
 
 
 class MyRequest(requests.Request):

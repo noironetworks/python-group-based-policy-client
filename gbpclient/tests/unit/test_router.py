@@ -28,7 +28,7 @@ class TestRouterCreate(test_router.TestRouter, test_cli20.CLITestV20Base):
         self.new_router = test_router.TestCreateRouter.new_router
         self.network_client.create_router = mock.Mock(
             return_value=self.new_router)
-        self.cmd = router.CreateRouter(self.app, self.namespace)
+        self.cmd = router.CreateRouter(self.app, None)
 
     def test_create_default_options(self):
         arglist = [
@@ -91,7 +91,7 @@ class TestRouterSet(test_router.TestRouter, test_cli20.CLITestV20Base):
         self.network_client.find_network = mock.Mock(
             return_value=self._network)
         self.network_client.find_subnet = mock.Mock(return_value=self._subnet)
-        self.cmd = router.SetRouter(self.app, self.namespace)
+        self.cmd = router.SetRouter(self.app, None)
 
     def test_set_no_options(self):
         arglist = [

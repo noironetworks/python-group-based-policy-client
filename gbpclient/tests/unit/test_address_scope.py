@@ -31,7 +31,7 @@ class TestAddressScopeCreate(
         self.network_client.create_address_scope = mock.Mock(
             return_value=self.new_address_scope)
 
-        self.cmd = address_scope.CreateAddressScope(self.app, self.namespace)
+        self.cmd = address_scope.CreateAddressScope(self.app, None)
 
     def test_create_default_options(self):
         arglist = [

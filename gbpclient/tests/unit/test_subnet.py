@@ -40,7 +40,7 @@ class TestSubnetCreate(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
             return_value=self._subnet)
         self.network_client.find_network = mock.Mock(
             return_value=self._network)
-        self.cmd = subnet.CreateSubnet(self.app, self.namespace)
+        self.cmd = subnet.CreateSubnet(self.app, None)
 
     def test_create_default_options(self):
         arglist = [
@@ -125,7 +125,7 @@ class TestSubnetSet(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
         super(TestSubnetSet, self).setUp()
         self.network_client.update_subnet = mock.Mock(return_value=None)
         self.network_client.find_subnet = mock.Mock(return_value=self._subnet)
-        self.cmd = subnet.SetSubnet(self.app, self.namespace)
+        self.cmd = subnet.SetSubnet(self.app, None)
 
     def test_set_no_options(self):
         arglist = [

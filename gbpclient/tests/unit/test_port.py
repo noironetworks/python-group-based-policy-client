@@ -39,7 +39,7 @@ class TestPortCreate(test_port.TestPort, test_cli20.CLITestV20Base):
         self.network_client.find_network = mock.Mock(return_value=fake_net)
         self.network_client.create_port = mock.Mock(
             return_value=self._port)
-        self.cmd = port.CreatePort(self.app, self.namespace)
+        self.cmd = port.CreatePort(self.app, None)
 
     def test_create_default_options(self):
         arglist = [
@@ -99,7 +99,7 @@ class TestPortSet(test_port.TestPort, test_cli20.CLITestV20Base):
         super(TestPortSet, self).setUp()
         self.network_client.update_port = mock.Mock(return_value=None)
         self.network_client.find_port = mock.Mock(return_value=self._port)
-        self.cmd = port.SetPort(self.app, self.namespace)
+        self.cmd = port.SetPort(self.app, None)
 
     def test_set_no_options(self):
         arglist = [

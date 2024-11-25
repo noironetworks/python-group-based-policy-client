@@ -29,7 +29,7 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
         super(TestNetworkCreate, self).setUp()
         self.network_client.create_network = mock.Mock(
             return_value=self._network)
-        self.cmd = network.CreateNetwork(self.app, self.namespace)
+        self.cmd = network.CreateNetwork(self.app, None)
 
     def test_create_default_options(self):
         arglist = [
@@ -210,7 +210,7 @@ class TestNetworkSet(test_network.TestNetwork, test_cli20.CLITestV20Base):
         self.network_client.update_network = mock.Mock(return_value=None)
         self.network_client.find_network = mock.Mock(
             return_value=self._network)
-        self.cmd = network.SetNetwork(self.app, self.namespace)
+        self.cmd = network.SetNetwork(self.app, None)
 
     def test_set_no_options(self):
         arglist = [

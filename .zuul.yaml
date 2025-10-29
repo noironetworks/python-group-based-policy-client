@@ -12,7 +12,8 @@
     check:
       jobs:
         - openstack-tox-pep8:
-            voting: false
+            nodeset: ubuntu-bionic
+            ansible-version: 9
             required-projects:
               - name: openstack/requirements
                 override-checkout: ussuri-eol
@@ -21,17 +22,22 @@
               - name: openstack/requirements
                 override-checkout: ussuri-eol
         - openstack-tox-py36:
+            nodeset: ubuntu-bionic
+            ansible-version: 9
             required-projects:
               - name: openstack/requirements
                 override-checkout: ussuri-eol
         - openstack-tox-py37:
+            nodeset: ubuntu-bionic
+            ansible-version: 9
             required-projects:
               - name: openstack/requirements
                 override-checkout: ussuri-eol
     gate:
       jobs:
         - openstack-tox-pep8:
-            voting: false
+            nodeset: ubuntu-bionic
+            ansible-version: 9
             required-projects:
               - name: openstack/requirements
                 override-checkout: ussuri-eol
@@ -40,10 +46,14 @@
               - name: openstack/requirements
                 override-checkout: ussuri-eol
         - openstack-tox-py36:
+            nodeset: ubuntu-bionic
+            ansible-version: 9
             required-projects:
               - name: openstack/requirements
                 override-checkout: ussuri-eol
         - openstack-tox-py37:
+            nodeset: ubuntu-bionic
+            ansible-version: 9
             required-projects:
               - name: openstack/requirements
                 override-checkout: ussuri-eol

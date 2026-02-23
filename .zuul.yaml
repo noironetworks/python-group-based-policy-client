@@ -12,17 +12,6 @@
     check:
       jobs:
         - openstack-tox-pep8:
-            ansible-version: 9
-            required-projects:
-              - name: openstack/requirements
-                override-checkout: xena-eol
-        - openstack-tox-py36:
-            ansible-version: 9
-            required-projects:
-              - name: openstack/requirements
-                override-checkout: xena-eol
-        - openstack-tox-py37:
-            ansible-version: 9
             required-projects:
               - name: openstack/requirements
                 override-checkout: xena-eol
@@ -31,24 +20,23 @@
             required-projects:
               - name: openstack/requirements
                 override-checkout: xena-eol
+        - openstack-tox-py39:
+            nodeset: ubuntu-focal
+            required-projects:
+              - name: openstack/requirements
+                override-checkout: xena-eol
     gate:
       jobs:
         - openstack-tox-pep8:
-            ansible-version: 9
-            required-projects:
-              - name: openstack/requirements
-                override-checkout: xena-eol
-        - openstack-tox-py36:
-            ansible-version: 9
-            required-projects:
-              - name: openstack/requirements
-                override-checkout: xena-eol
-        - openstack-tox-py37:
-            ansible-version: 9
             required-projects:
               - name: openstack/requirements
                 override-checkout: xena-eol
         - openstack-tox-py38:
+            nodeset: ubuntu-focal
+            required-projects:
+              - name: openstack/requirements
+                override-checkout: xena-eol
+        - openstack-tox-py39:
             nodeset: ubuntu-focal
             required-projects:
               - name: openstack/requirements

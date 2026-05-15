@@ -30,8 +30,21 @@ def _get_attrs_subnet_extension(client_manager, parsed_args, is_create=True):
     attrs = _get_attrs_subnet_new(client_manager, parsed_args, is_create)
     if parsed_args.apic_snat_host_pool_enable:
         attrs['apic:snat_host_pool'] = True
+        # Host-pool mode and service-network mode are mutually exclusive.
+        attrs['apic:service_network'] = ''
     if parsed_args.apic_snat_host_pool_disable:
         attrs['apic:snat_host_pool'] = False
+    if parsed_args.apic_service_network is not None:
+        attrs['apic:service_network'] = parsed_args.apic_service_network
+    if parsed_args.apic_dist_snat_start_port is not None:
+        attrs['apic:dist_snat_start_port'] = (
+            parsed_args.apic_dist_snat_start_port)
+    if parsed_args.apic_dist_snat_end_port is not None:
+        attrs['apic:dist_snat_end_port'] = (
+            parsed_args.apic_dist_snat_end_port)
+    if parsed_args.apic_dist_snat_alloc_size is not None:
+        attrs['apic:dist_snat_alloc_size'] = (
+            parsed_args.apic_dist_snat_alloc_size)
     if ('apic_active_active_aap_enable' in parsed_args and
         parsed_args.apic_active_active_aap_enable):
         attrs['apic:active_active_aap'] = True
@@ -69,6 +82,14 @@ subnet_sdk.Subnet.apic_synchronization_state = resource.Body(
     'apic:synchronization_state')
 subnet_sdk.Subnet.apic_snat_host_pool = resource.Body(
     'apic:snat_host_pool')
+subnet_sdk.Subnet.apic_service_network = resource.Body(
+    'apic:service_network')
+subnet_sdk.Subnet.apic_dist_snat_start_port = resource.Body(
+    'apic:dist_snat_start_port')
+subnet_sdk.Subnet.apic_dist_snat_end_port = resource.Body(
+    'apic:dist_snat_end_port')
+subnet_sdk.Subnet.apic_dist_snat_alloc_size = resource.Body(
+    'apic:dist_snat_alloc_size')
 subnet_sdk.Subnet.apic_active_active_aap = resource.Body(
     'apic:active_active_aap')
 subnet_sdk.Subnet.apic_snat_subnet_only = resource.Body(
@@ -86,7 +107,8 @@ subnet_sdk.Subnet.apic_router_gw_ip_pool = resource.Body(
 class CreateSubnetExtension(hooks.CommandHook):
 
     def get_parser(self, parser):
-        parser.add_argument(
+        snat_mode_group = parser.add_mutually_exclusive_group()
+        snat_mode_group.add_argument(
             '--apic-snat-host-pool-enable',
             action='store_true',
             default=None,
@@ -94,12 +116,41 @@ class CreateSubnetExtension(hooks.CommandHook):
             help=_("Set APIC snat host pool to true\n"
                    "Default value for apic_snat_host_pool is False ")
         )
+        snat_mode_group.add_argument(
+            '--apic-service-network',
+            metavar="<network>",
+            dest='apic_service_network',
+            default=None,
+            help=_("Set APIC service network for distributed SNAT\n"
+                   "Use empty string to disable distributed SNAT mode ")
+        )
         parser.add_argument(
             '--apic-snat-host-pool-disable',
             action='store_true',
             dest='apic_snat_host_pool_disable',
             help=_("Set APIC snat host pool to false\n"
                    "Default value for apic_snat_host_pool is False ")
+        )
+        parser.add_argument(
+            '--apic-dist-snat-start-port',
+            metavar="<integer>",
+            dest='apic_dist_snat_start_port',
+            default=None,
+            help=_("Set APIC distributed SNAT start port ")
+        )
+        parser.add_argument(
+            '--apic-dist-snat-end-port',
+            metavar="<integer>",
+            dest='apic_dist_snat_end_port',
+            default=None,
+            help=_("Set APIC distributed SNAT pool size ")
+        )
+        parser.add_argument(
+            '--apic-dist-snat-alloc-size',
+            metavar="<integer>",
+            dest='apic_dist_snat_alloc_size',
+            default=None,
+            help=_("Set APIC distributed SNAT allocation size ")
         )
         parser.add_argument(
             '--apic-active-active-aap-enable',
@@ -199,7 +250,8 @@ class CreateSubnetExtension(hooks.CommandHook):
 class SetSubnetExtension(hooks.CommandHook):
 
     def get_parser(self, parser):
-        parser.add_argument(
+        snat_mode_group = parser.add_mutually_exclusive_group()
+        snat_mode_group.add_argument(
             '--apic-snat-host-pool-enable',
             action='store_true',
             default=None,
@@ -207,12 +259,41 @@ class SetSubnetExtension(hooks.CommandHook):
             help=_("Set APIC snat host pool to true\n"
                    "Default value for apic_snat_host_pool is False ")
         )
+        snat_mode_group.add_argument(
+            '--apic-service-network',
+            metavar="<network>",
+            dest='apic_service_network',
+            default=None,
+            help=_("Set APIC service network for distributed SNAT\n"
+                   "Use empty string to disable distributed SNAT mode ")
+        )
         parser.add_argument(
             '--apic-snat-host-pool-disable',
             action='store_true',
             dest='apic_snat_host_pool_disable',
             help=_("Set APIC snat host pool to false\n"
                    "Default value for apic_snat_host_pool is False ")
+        )
+        parser.add_argument(
+            '--apic-dist-snat-start-port',
+            metavar="<integer>",
+            dest='apic_dist_snat_start_port',
+            default=None,
+            help=_("Set APIC distributed SNAT start port ")
+        )
+        parser.add_argument(
+            '--apic-dist-snat-end-port',
+            metavar="<integer>",
+            dest='apic_dist_snat_end_port',
+            default=None,
+            help=_("Set APIC distributed SNAT pool size ")
+        )
+        parser.add_argument(
+            '--apic-dist-snat-alloc-size',
+            metavar="<integer>",
+            dest='apic_dist_snat_alloc_size',
+            default=None,
+            help=_("Set APIC distributed SNAT allocation size ")
         )
         parser.add_argument(
             '--apic-snat-subnet-only-enable',

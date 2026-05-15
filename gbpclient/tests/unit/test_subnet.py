@@ -15,6 +15,7 @@ from unittest import mock
 
 from gbpclient.gbp.v2_0 import subnet as subnet_ext
 from gbpclient.tests.unit import test_cli20
+from gbpclient.tests.unit.test_cli20 import ParserException
 from openstackclient.network.v2 import subnet
 from openstackclient.tests.unit.network.v2 import fakes as network_fakes
 from openstackclient.tests.unit.network.v2 import test_subnet
@@ -52,6 +53,10 @@ class TestSubnetCreate(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
             ('name', self._subnet.name),
             ('network', self._subnet.network_id),
             ('apic_snat_host_pool_enable', None),
+            ('apic_service_network', None),
+            ('apic_dist_snat_start_port', None),
+            ('apic_dist_snat_end_port', None),
+            ('apic_dist_snat_alloc_size', None),
             ('apic_active_active_aap_enable', None),
             ('apic_snat_subnet_only_enable', None),
             ('apic_epg_subnet', False),
@@ -107,12 +112,66 @@ class TestSubnetCreate(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
             'network_id': self._subnet.network_id,
             'apic:active_active_aap': True,
             'apic:snat_host_pool': True,
+            'apic:service_network': '',
             'apic:snat_subnet_only': True,
             'apic:epg_subnet': True,
             'apic:advertised_externally': True,
             'apic:shared_between_vrfs': True,
             'apic:router_gw_ip_pool': True
         })
+
+    def test_create_dist_snat_options(self):
+        arglist = [
+            "--subnet-range", self._subnet.cidr,
+            "--network", self._subnet.network_id,
+            self._subnet.name,
+            "--apic-service-network", "l3out-2_service",
+            "--apic-dist-snat-start-port", "20000",
+            "--apic-dist-snat-end-port", "30000",
+            "--apic-dist-snat-alloc-size", "1000"
+        ]
+        verifylist = [
+            ('name', self._subnet.name),
+            ('network', self._subnet.network_id),
+            ('apic_service_network', 'l3out-2_service'),
+            ('apic_dist_snat_start_port', '20000'),
+            ('apic_dist_snat_end_port', '30000'),
+            ('apic_dist_snat_alloc_size', '1000')
+        ]
+        create_ext = subnet_ext.CreateSubnetExtension(self.app)
+        parsed_args = self.check_parser_ext(
+            self.cmd, arglist, verifylist, create_ext)
+        columns, data = self.cmd.take_action(parsed_args)
+
+        self.network_client.create_subnet.assert_called_once_with(**{
+            'ip_version': 4,
+            'cidr': '10.10.10.0/24',
+            'name': self._subnet.name,
+            'network_id': self._subnet.network_id,
+            'apic:service_network': 'l3out-2_service',
+            'apic:dist_snat_start_port': '20000',
+            'apic:dist_snat_end_port': '30000',
+            'apic:dist_snat_alloc_size': '1000'
+        })
+
+    def test_create_service_network_mutually_exclusive_with_host_pool(self):
+        arglist = [
+            "--subnet-range", self._subnet.cidr,
+            "--network", self._subnet.network_id,
+            self._subnet.name,
+            "--apic-snat-host-pool-enable",
+            "--apic-service-network", "l3out-2_service",
+        ]
+        verifylist = []
+
+        create_ext = subnet_ext.CreateSubnetExtension(self.app)
+        self.assertRaises(
+            ParserException,
+            self.check_parser_ext,
+            self.cmd,
+            arglist,
+            verifylist,
+            create_ext)
 
 
 # Tests for subnet set for APIC extensions
@@ -134,6 +193,10 @@ class TestSubnetSet(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
         verifylist = [
             ('subnet', self._subnet.name),
             ('apic_snat_host_pool_enable', None),
+            ('apic_service_network', None),
+            ('apic_dist_snat_start_port', None),
+            ('apic_dist_snat_end_port', None),
+            ('apic_dist_snat_alloc_size', None),
             ('apic_snat_subnet_only_enable', None),
         ]
         set_ext = subnet_ext.SetSubnetExtension(self.app)
@@ -148,6 +211,10 @@ class TestSubnetSet(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
         arglist = [
             self._subnet.name,
             "--apic-snat-host-pool-disable",
+            "--apic-service-network", "",
+            "--apic-dist-snat-start-port", "10000",
+            "--apic-dist-snat-end-port", "50000",
+            "--apic-dist-snat-alloc-size", "500",
             "--apic-snat-subnet-only-disable",
             "--apic-advertised-externally-enable",
             "--apic-shared-between-vrfs-enable",
@@ -156,6 +223,10 @@ class TestSubnetSet(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
         verifylist = [
             ('subnet', self._subnet.name),
             ('apic_snat_host_pool_disable', True),
+            ('apic_service_network', ''),
+            ('apic_dist_snat_start_port', '10000'),
+            ('apic_dist_snat_end_port', '50000'),
+            ('apic_dist_snat_alloc_size', '500'),
             ('apic_snat_subnet_only_disable', True),
             ('apic_advertised_externally_enable', True),
             ('apic_shared_between_vrfs_enable', True),
@@ -168,6 +239,10 @@ class TestSubnetSet(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
 
         attrs = {
             'apic:snat_host_pool': False,
+            'apic:service_network': '',
+            'apic:dist_snat_start_port': '10000',
+            'apic:dist_snat_end_port': '50000',
+            'apic:dist_snat_alloc_size': '500',
             'apic:snat_subnet_only': False,
             'apic:advertised_externally': True,
             'apic:shared_between_vrfs': True,

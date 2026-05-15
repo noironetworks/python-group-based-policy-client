@@ -29,6 +29,12 @@ _get_attrs_network_new = network._get_attrs_network
 
 def _get_attrs_network_extension(client_manager, parsed_args):
     attrs = _get_attrs_network_new(client_manager, parsed_args)
+    if ('apic_service_network_enable' in parsed_args and
+        parsed_args.apic_service_network_enable):
+        attrs['apic:service_network'] = True
+    if ('apic_service_network_disable' in parsed_args and
+        parsed_args.apic_service_network_disable):
+        attrs['apic:service_network'] = False
     if ('apic_svi_enable' in parsed_args and
         parsed_args.apic_svi_enable):
         attrs['apic:svi'] = True
@@ -139,11 +145,28 @@ network_sdk.Network.apic_policy_enforcement_pref = resource.Body(
 network_sdk.Network.apic_nat_type = resource.Body('apic:nat_type')
 network_sdk.Network.apic_external_cidrs = resource.Body('apic:external_cidrs')
 network_sdk.Network.apic_no_nat_cidrs = resource.Body('apic:no_nat_cidrs')
+network_sdk.Network.apic_service_network = resource.Body(
+    'apic:service_network')
 
 
 class CreateNetworkExtension(hooks.CommandHook):
 
     def get_parser(self, parser):
+        parser.add_argument(
+            '--apic-service-network-enable',
+            action='store_true',
+            default=None,
+            dest='apic_service_network_enable',
+            help=_("Set APIC service network to true\n"
+                   "Default value for apic_service_network is False ")
+        )
+        parser.add_argument(
+            '--apic-service-network-disable',
+            action='store_true',
+            dest='apic_service_network_disable',
+            help=_("Set APIC service network to false\n"
+                   "Default value for apic_service_network is False ")
+        )
         parser.add_argument(
             '--apic-svi-enable',
             action='store_true',
@@ -330,6 +353,21 @@ class CreateNetworkExtension(hooks.CommandHook):
 class SetNetworkExtension(hooks.CommandHook):
 
     def get_parser(self, parser):
+        parser.add_argument(
+            '--apic-service-network-enable',
+            action='store_true',
+            default=None,
+            dest='apic_service_network_enable',
+            help=_("Set APIC service network to true\n"
+                   "Default value for apic_service_network is False ")
+        )
+        parser.add_argument(
+            '--apic-service-network-disable',
+            action='store_true',
+            dest='apic_service_network_disable',
+            help=_("Set APIC service network to false\n"
+                   "Default value for apic_service_network is False ")
+        )
         parser.add_argument(
             '--apic-bgp-enable',
             action='store_true',

@@ -43,6 +43,7 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
             ('apic_distinguished_names', None),
             ('apic_nat_type', None),
             ('apic_external_cidrs', None),
+            ('apic_service_network_enable', None),
             ('apic_svi_enable', None),
             ('apic_bgp_enable', None),
             ('apic_bgp_asn', None),
@@ -77,6 +78,7 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
             "--apic-distinguished-names", 'ExternalNetwork=test1',
             "--apic-nat-type", "edge",
             "--apic-external-cidrs", '20.20.20.0/8',
+            "--apic-service-network-enable",
             "--apic-svi-enable",
             "--apic-bgp-enable",
             "--apic-bgp-asn", '1',
@@ -99,6 +101,7 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
             ('apic_distinguished_names', [{'ExternalNetwork': 'test1'}]),
             ('apic_nat_type', "edge"),
             ('apic_external_cidrs', '20.20.20.0/8'),
+            ('apic_service_network_enable', True),
             ('apic_svi_enable', True),
             ('apic_bgp_enable', True),
             ('apic_bgp_asn', '1'),
@@ -126,6 +129,7 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
             'apic:distinguished_names': {"ExternalNetwork": "test1"},
             'apic:external_cidrs': ['20.20.20.0/8'],
             'apic:nat_type': 'edge',
+            'apic:service_network': True,
             'apic:nested_domain_name': 'dntest1',
             'apic:nested_domain_type': 'dntype1',
             'apic:svi': True,
@@ -164,6 +168,26 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
             'name': self._network.name,
             'apic:extra_consumed_contracts': [],
             'apic:extra_provided_contracts': [],
+        })
+
+    def test_create_service_network_disable(self):
+        arglist = [
+            self._network.name,
+            "--apic-service-network-disable",
+        ]
+        verifylist = [
+            ('name', self._network.name),
+            ('apic_service_network_disable', True),
+        ]
+        create_ext = network_ext.CreateNetworkExtension(self.app)
+        parsed_args = self.check_parser_ext(
+            self.cmd, arglist, verifylist, create_ext)
+        columns, data = self.cmd.take_action(parsed_args)
+
+        self.network.create_network.assert_called_once_with(**{
+            'admin_state_up': True,
+            'name': self._network.name,
+            'apic:service_network': False,
         })
 
     def test_create_no_nat_option(self):
@@ -220,6 +244,7 @@ class TestNetworkSet(test_network.TestNetwork, test_cli20.CLITestV20Base):
             ('apic_nested_domain_name', None),
             ('apic_nested_domain_type', None),
             ('apic_external_cidrs', None),
+            ('apic_service_network_enable', None),
             ('apic_bgp_enable', None),
             ('apic_bgp_asn', None),
             ('apic_bgp_type', None),
@@ -244,6 +269,7 @@ class TestNetworkSet(test_network.TestNetwork, test_cli20.CLITestV20Base):
         arglist = [
             self._network.name,
             "--external",
+            "--apic-service-network-disable",
             "--apic-nested-domain-name", "dntest11",
             "--apic-nested-domain-type", "dntype11",
             "--apic-external-cidrs", '30.30.30.0/8',
@@ -262,6 +288,7 @@ class TestNetworkSet(test_network.TestNetwork, test_cli20.CLITestV20Base):
         verifylist = [
             ('network', self._network.name),
             ('external', True),
+            ('apic_service_network_disable', True),
             ('apic_nested_domain_name', "dntest11"),
             ('apic_nested_domain_type', "dntype11"),
             ('apic_external_cidrs', '30.30.30.0/8'),
@@ -284,6 +311,7 @@ class TestNetworkSet(test_network.TestNetwork, test_cli20.CLITestV20Base):
 
         attrs = {
             'router:external': True,
+            'apic:service_network': False,
             'apic:nested_domain_name': 'dntest11',
             'apic:external_cidrs': ['30.30.30.0/8'],
             'apic:nested_domain_name': 'dntest11',
@@ -303,6 +331,24 @@ class TestNetworkSet(test_network.TestNetwork, test_cli20.CLITestV20Base):
 
         self.network.update_network.assert_called_once_with(
             self._network, **attrs)
+        self.assertIsNone(result)
+
+    def test_set_service_network_enable(self):
+        arglist = [
+            self._network.name,
+            "--apic-service-network-enable",
+        ]
+        verifylist = [
+            ('network', self._network.name),
+            ('apic_service_network_enable', True),
+        ]
+        set_ext = network_ext.SetNetworkExtension(self.app)
+        parsed_args = self.check_parser_ext(
+            self.cmd, arglist, verifylist, set_ext)
+        result = self.cmd.take_action(parsed_args)
+
+        self.network.update_network.assert_called_once_with(
+            self._network, **{'apic:service_network': True})
         self.assertIsNone(result)
 
     def test_set_apic_no_external_cidrs(self):

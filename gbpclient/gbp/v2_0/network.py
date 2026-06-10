@@ -31,10 +31,10 @@ def _get_attrs_network_extension(client_manager, parsed_args):
     attrs = _get_attrs_network_new(client_manager, parsed_args)
     if ('apic_service_network_enable' in parsed_args and
         parsed_args.apic_service_network_enable):
-        attrs['apic:service_network'] = True
+        attrs['apic:service_network_enable'] = True
     if ('apic_service_network_disable' in parsed_args and
         parsed_args.apic_service_network_disable):
-        attrs['apic:service_network'] = False
+        attrs['apic:service_network_enable'] = False
     if ('apic_svi_enable' in parsed_args and
         parsed_args.apic_svi_enable):
         attrs['apic:svi'] = True
@@ -146,7 +146,7 @@ network_sdk.Network.apic_nat_type = resource.Body('apic:nat_type')
 network_sdk.Network.apic_external_cidrs = resource.Body('apic:external_cidrs')
 network_sdk.Network.apic_no_nat_cidrs = resource.Body('apic:no_nat_cidrs')
 network_sdk.Network.apic_service_network = resource.Body(
-    'apic:service_network')
+    'apic:service_network_enable')
 
 
 class CreateNetworkExtension(hooks.CommandHook):

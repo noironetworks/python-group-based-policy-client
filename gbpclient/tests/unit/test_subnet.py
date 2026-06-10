@@ -148,7 +148,7 @@ class TestSubnetCreate(test_subnet.TestSubnet, test_cli20.CLITestV20Base):
             'cidr': '10.10.10.0/24',
             'name': self._subnet.name,
             'network_id': self._subnet.network_id,
-            'apic:service_network': 'l3out-2_service',
+            'apic:service_network': self._network.id,
             'apic:dist_snat_start_port': '20000',
             'apic:dist_snat_end_port': '30000',
             'apic:dist_snat_alloc_size': '1000'

@@ -129,7 +129,7 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
             'apic:distinguished_names': {"ExternalNetwork": "test1"},
             'apic:external_cidrs': ['20.20.20.0/8'],
             'apic:nat_type': 'edge',
-            'apic:service_network': True,
+            'apic:service_network_enable': True,
             'apic:nested_domain_name': 'dntest1',
             'apic:nested_domain_type': 'dntype1',
             'apic:svi': True,
@@ -187,7 +187,7 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
         self.network.create_network.assert_called_once_with(**{
             'admin_state_up': True,
             'name': self._network.name,
-            'apic:service_network': False,
+            'apic:service_network_enable': False,
         })
 
     def test_create_no_nat_option(self):
@@ -311,7 +311,7 @@ class TestNetworkSet(test_network.TestNetwork, test_cli20.CLITestV20Base):
 
         attrs = {
             'router:external': True,
-            'apic:service_network': False,
+            'apic:service_network_enable': False,
             'apic:nested_domain_name': 'dntest11',
             'apic:external_cidrs': ['30.30.30.0/8'],
             'apic:nested_domain_name': 'dntest11',
@@ -348,7 +348,7 @@ class TestNetworkSet(test_network.TestNetwork, test_cli20.CLITestV20Base):
         result = self.cmd.take_action(parsed_args)
 
         self.network.update_network.assert_called_once_with(
-            self._network, **{'apic:service_network': True})
+            self._network, **{'apic:service_network_enable': True})
         self.assertIsNone(result)
 
     def test_set_apic_no_external_cidrs(self):

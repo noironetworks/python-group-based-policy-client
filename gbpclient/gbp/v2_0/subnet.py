@@ -35,7 +35,14 @@ def _get_attrs_subnet_extension(client_manager, parsed_args, is_create=True):
     if parsed_args.apic_snat_host_pool_disable:
         attrs['apic:snat_host_pool'] = False
     if parsed_args.apic_service_network is not None:
-        attrs['apic:service_network'] = parsed_args.apic_service_network
+        if parsed_args.apic_service_network:
+            network_client = client_manager.network
+            network = network_client.find_network(
+                parsed_args.apic_service_network,
+                ignore_missing=False)
+            attrs['apic:service_network'] = network.id
+        else:
+            attrs['apic:service_network'] = ''
     if parsed_args.apic_dist_snat_start_port is not None:
         attrs['apic:dist_snat_start_port'] = (
             parsed_args.apic_dist_snat_start_port)

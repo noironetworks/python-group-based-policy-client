@@ -16,12 +16,13 @@ from unittest import mock
 from gbpclient.gbp.v2_0 import router as router_ext
 from gbpclient.tests.unit import test_cli20
 from openstackclient.network.v2 import router
+from openstackclient.tests.unit.network.v2 import fakes as network_fakes
 from openstackclient.tests.unit.network.v2 import test_router
 
 
 # Tests for router create for APIC extensions
 #
-class TestRouterCreate(test_router.TestRouter, test_cli20.CLITestV20Base):
+class TestRouterCreate(network_fakes.TestNetworkV2, test_cli20.CLITestV20Base):
 
     def setUp(self):
         super(TestRouterCreate, self).setUp()
@@ -75,7 +76,7 @@ class TestRouterCreate(test_router.TestRouter, test_cli20.CLITestV20Base):
 
 # Tests for router set for APIC extensions
 #
-class TestRouterSet(test_router.TestRouter, test_cli20.CLITestV20Base):
+class TestRouterSet(network_fakes.TestNetworkV2, test_cli20.CLITestV20Base):
 
     _network = test_router.TestSetRouter._network
     _subnet = test_router.TestSetRouter._subnet

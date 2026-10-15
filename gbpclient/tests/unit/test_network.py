@@ -16,12 +16,14 @@ from unittest import mock
 from gbpclient.gbp.v2_0 import network as network_ext
 from gbpclient.tests.unit import test_cli20
 from openstackclient.network.v2 import network
+from openstackclient.tests.unit.network.v2 import fakes as network_fakes
 from openstackclient.tests.unit.network.v2 import test_network
 
 
 # Tests for network create with APIC extensions
 #
-class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
+class TestNetworkCreate(
+    network_fakes.TestNetworkV2, test_cli20.CLITestV20Base):
 
     _network = test_network.TestCreateNetworkIdentityV3._network
 
@@ -225,7 +227,7 @@ class TestNetworkCreate(test_network.TestNetwork, test_cli20.CLITestV20Base):
 
 # Tests for network set with APIC extensions
 #
-class TestNetworkSet(test_network.TestNetwork, test_cli20.CLITestV20Base):
+class TestNetworkSet(network_fakes.TestNetworkV2, test_cli20.CLITestV20Base):
 
     _network = test_network.TestSetNetwork._network
 

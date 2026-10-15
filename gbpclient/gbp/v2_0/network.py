@@ -24,7 +24,9 @@ from osc_lib.cli import parseractions
 from openstackclient.i18n import _
 
 
-_get_attrs_network_new = network._get_attrs_network
+_get_attrs_network_new = getattr(
+    network, '_get_attrs', getattr(network, '_get_attrs_network', None)
+)
 
 
 def _get_attrs_network_extension(client_manager, parsed_args):
@@ -115,7 +117,10 @@ def _get_attrs_network_extension(client_manager, parsed_args):
     return attrs
 
 
-network._get_attrs_network = _get_attrs_network_extension
+if hasattr(network, '_get_attrs'):
+    network._get_attrs = _get_attrs_network_extension
+if hasattr(network, '_get_attrs_network'):
+    network._get_attrs_network = _get_attrs_network_extension
 
 network_sdk.Network.apic_synchronization_state = resource.Body(
     'apic:synchronization_state')
